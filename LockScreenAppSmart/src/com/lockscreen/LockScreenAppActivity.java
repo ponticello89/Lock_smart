@@ -55,6 +55,12 @@ public class LockScreenAppActivity extends Activity {
 //		super.onAttachedToWindow();
 //	}
 
+	
+	
+	
+	
+	
+	
 	private Handler handler = new Handler() {
 	    @Override
 	    public void handleMessage(Message msg) {
