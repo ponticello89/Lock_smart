@@ -125,19 +125,16 @@ public class LockScreenAppActivity extends Activity {
 	 */
 
 	public void onCreate(Bundle savedInstanceState) {
-				
-		super.onCreate(savedInstanceState);
-		
-		start = true;
-		Thread t = new Thread(separateThread);		
-        t.start();        
- 
-        
-		
 		System.out.println("onCreate");
 		
+		super.onCreate(savedInstanceState);
+		
+		/*
+		 * SOUND DEFAULT LOCK SCREEN
+		 */
 		Settings.System.putInt(getContentResolver(), "lockscreen_sounds_enabled", 0);
-
+		
+		
 		// Con questo setto che l'applicazione deve attivarsi:
 		// -quando il telefono e bloccato
 		// -e in modalita fullscreenù
@@ -146,47 +143,53 @@ public class LockScreenAppActivity extends Activity {
 								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
 								WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		
+		/*
+		 * LAYOUT
+		 */
 		setContentView(R.layout.main);
-
-		droid = (ImageView) findViewById(R.id.droid);
-
-//		System.out.println("measured width" + droid.getMeasuredWidth());
-//		System.out.println(" width" + droid.getWidth());
-
+		
+		
+		/*
+		 * CLOCK
+		 */
+		start = true;
+		Thread t = new Thread(separateThread);		
+        t.start();        
+ 
+        clock = (TextView) findViewById(R.id.textView1);
+		Calendar c = Calendar.getInstance();
+		clock.setText(c.get(Calendar.HOUR_OF_DAY) + " : " + c.get(Calendar.MINUTE) + " : " + c.get(Calendar.SECOND) );
+        
+		/*
+		 *  BOH GESTIONE VARIA
+		 */	
 		if(	getIntent() != null && 
 			getIntent().hasExtra("kill") && 
 			getIntent().getExtras().getInt("kill") == 1) {
-			// Toast.makeText(this, "" + "kill activityy",
-			// Toast.LENGTH_SHORT).show();
 
 			finish();
 		}
 
 		try {
-
 			
-			// WindowManager.LayoutParams params = getWindow().getAttributes();
-			// params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-			// params.screenBrightness = 0;
-			// getWindow().setAttributes(params);
-
+			/*
+			 *  BOH GESTIONE VARIA
+			 */	
 			StateListener phoneStateListener = new StateListener();
 			TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-			telephonyManager.listen(phoneStateListener,
-									PhoneStateListener.LISTEN_CALL_STATE);
+			telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
-			windowwidth = getWindowManager().getDefaultDisplay().getWidth();
-//			System.out.println("windowwidth" + windowwidth);
-			windowheight = getWindowManager().getDefaultDisplay().getHeight();
-//			System.out.println("windowheight" + windowheight);
-
-			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
-			marginParams2.setMargins(	(windowwidth  / 24) * 10,
-										(windowheight / 32) * 8, 
-										0, 
-										0);
-			// marginParams2.setMargins(((windowwidth-droid.getWidth())/2),((windowheight/32)*8),0,0);
 			
+			windowwidth  = getWindowManager().getDefaultDisplay().getWidth();
+			windowheight = getWindowManager().getDefaultDisplay().getHeight();
+
+			
+			droid = (ImageView) findViewById(R.id.droid);
+			
+			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
+			marginParams2.setMargins((windowwidth  / 24) * 10, (windowheight / 32) * 8, 0, 0);
+							
 			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);
 			droid.setLayoutParams(layoutdroid);
 
@@ -198,29 +201,18 @@ public class LockScreenAppActivity extends Activity {
 			 * LinearLayout.LayoutParams(marginParams);
 			 * phone.setLayoutParams(layoutParams1);
 			 */
-
-			clock = (TextView) findViewById(R.id.textView1);
-			Calendar c = Calendar.getInstance();
-			clock.setText("Time: " + c.get(Calendar.HOUR_OF_DAY) + " : " + c.get(Calendar.MINUTE) + " : " + c.get(Calendar.SECOND) );
-			
-			LinearLayout timelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
+					
+//			LinearLayout timelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
 			
 			LinearLayout homelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
-			homelinear.setPadding(	0, 
-									0, 
-									0, 
-									(windowheight / 32) * 3);
+			homelinear.setPadding(0,0,0,(windowheight / 32) * 3);
+			
 			home = (ImageView) findViewById(R.id.home);
-
 			MarginLayoutParams marginParams1 = new MarginLayoutParams(home.getLayoutParams());
-			marginParams1.setMargins(	(windowwidth  / 24) * 10, 
-										0,
-										(windowheight / 32) * 8, 
-										0);
-			// marginParams1.setMargins(((windowwidth-home.getWidth())/2),0,(windowheight/32)*10,0);
+			marginParams1.setMargins((windowwidth  / 24) * 10, 0, (windowheight / 32) * 8,0);			
 			LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(marginParams1);
-
 			home.setLayoutParams(layout);
+			
 
 			droid.setOnTouchListener(new View.OnTouchListener() {
 
@@ -234,7 +226,7 @@ public class LockScreenAppActivity extends Activity {
 						case MotionEvent.ACTION_DOWN:
 							int[] hompos = new int[2];
 							// int[] phonepos=new int[2];
-							droidpos = new int[2];
+							droidpos     = new int[2];
 							// phone.getLocationOnScreen(phonepos);
 							home.getLocationOnScreen(hompos);
 							home_x = hompos[0];
@@ -248,15 +240,15 @@ public class LockScreenAppActivity extends Activity {
 							int x_cord = (int) event.getRawX();
 							int y_cord = (int) event.getRawY();
 	
-							if (x_cord > windowwidth - (windowwidth / 24)) {
-								x_cord = windowwidth - (windowwidth / 24) * 2;
-							}
-							if (y_cord > windowheight - (windowheight / 32)) {
-								y_cord = windowheight - (windowheight / 32) * 2;
-							}
+//							if (x_cord > windowwidth - (windowwidth / 24)) {
+//								x_cord = windowwidth - (windowwidth / 24) * 2;
+//							}
+//							if (y_cord > windowheight - (windowheight / 32)) {
+//								y_cord = windowheight - (windowheight / 32) * 2;
+//							}
 	
-							layoutParams.leftMargin = x_cord;
-							layoutParams.topMargin  = y_cord;
+							layoutParams.leftMargin = x_cord - (droid.getWidth()/2);
+							layoutParams.topMargin  = y_cord - (droid.getHeight()/2);
 	
 							droid.getLocationOnScreen(droidpos);
 							v.setLayoutParams(layoutParams);
