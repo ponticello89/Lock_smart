@@ -6,4 +6,13 @@ public class Utility {
 						
 		return (value/100)*percent;
 	}
+	
+	public String dxFiller(String value, String filler, int lenght){
+		
+		while (value.length() < lenght) {
+			value = filler + value;			
+		}
+		
+		return value;
+	}
 }

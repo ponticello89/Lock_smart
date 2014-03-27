@@ -3,7 +3,11 @@ package com.lockscreen;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -66,8 +70,16 @@ public class LockScreenAppActivity extends Activity {
 	    @Override
 	    public void handleMessage(Message msg) {
 	        Bundle b = msg.getData();
-	        String key = b.getString("timeKey");
-	        clock.setText(key);
+	        
+	        String ora 		= b.getString("ora");
+	        String minuti 	= b.getString("minuti");
+	        String secondi 	= b.getString("secondi");
+	        
+	        if(ora != null && minuti != null){
+	        	clock.setText(ora + " : " + minuti + " : " + secondi);
+	        }else{
+	        	clock.setText("");
+	        }
 	    }
     };
  
@@ -90,45 +102,35 @@ public class LockScreenAppActivity extends Activity {
 	    		updateUI();
 	    		
 	    	}
-			Message msg = new Message();
-	        Bundle b = new Bundle();	            
-	        b.putString("timeKey", "");
-	        msg.setData(b);
+			
+			Message msg = new Message();	        
 			handler.sendMessage(msg);
 	    } 	 
 	    
     };
 		
     private void updateUI() {
-    	      	
-            Message msg = new Message();
-            Bundle b = new Bundle();
-            
-            Calendar c = Calendar.getInstance();
-			            
-            
-            b.putString("timeKey", "Time: " + c.get(Calendar.HOUR_OF_DAY) + " : " + c.get(Calendar.MINUTE) + " : " + c.get(Calendar.SECOND) );
-            msg.setData(b);
-            handler.sendMessage(msg);                 
+    	    
+    	Utility utility = new Utility();
+    	Calendar c = Calendar.getInstance();    	
+    	Message msg = new Message();
+        Bundle bundle = new Bundle();
+                       			                       
+        bundle.putString("ora", utility.dxFiller(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), "0", 2));
+        bundle.putString("minuti", utility.dxFiller(String.valueOf(c.get(Calendar.MINUTE)), "0", 2));
+        bundle.putString("secondi", utility.dxFiller(String.valueOf(c.get(Calendar.SECOND)), "0", 2));
         
+        msg.setData(bundle);
+        handler.sendMessage(msg);                         
     }
 	
-	
-	/*
-	 * @Override protected void onNewIntent(Intent intent) { // TODO
-	 * Auto-generated method stub super.onNewIntent(intent);
-	 * getWindow().addFlags
-	 * (WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager
-	 * .LayoutParams
-	 * .FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	 * 
-	 * }
-	 */
 
 	public void onCreate(Bundle savedInstanceState) {
 		System.out.println("onCreate");
 		
 		super.onCreate(savedInstanceState);
+		
+		Utility utility = new Utility();
 		
 		/*
 		 * SOUND DEFAULT LOCK SCREEN
@@ -154,11 +156,12 @@ public class LockScreenAppActivity extends Activity {
 		/*
 		 * CLOCK
 		 */
+		clock = (TextView) findViewById(R.id.textView1);
 		start = true;
 		Thread t = new Thread(separateThread);		
         t.start();        
  
-        clock = (TextView) findViewById(R.id.textView1);
+        
 		Calendar c = Calendar.getInstance();
 		clock.setText(c.get(Calendar.HOUR_OF_DAY) + " : " + c.get(Calendar.MINUTE) + " : " + c.get(Calendar.SECOND) );
         
@@ -201,28 +204,32 @@ public class LockScreenAppActivity extends Activity {
 			/*
 			 * Home
 			 */
-//			LinearLayout homelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
-//			homelinear.setPadding(0,0,0,(windowheight / 32) * 15);
-//			homelinear.setPadding(0,0,0,windowheight/2);
-			
-			
-			home = (ImageView) findViewById(R.id.home);			
-//			MarginLayoutParams marginParams1 = new MarginLayoutParams(home.getLayoutParams());
-//			marginParams1.setMargins((windowwidth  / 24) * 10, 0, (windowheight / 32) * 8,0);			
-//			LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(marginParams1);			
-//			home.setLayoutParams(layout);			
-			
+			home = (ImageView) findViewById(R.id.home);
+			Bitmap homeBMap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
+			homeBMap = Bitmap.createScaledBitmap(	homeBMap, 
+													(windowwidth  / 24)  * 5, 
+													(windowheight  / 32) * 4, 
+													false);
+			home.setImageBitmap(homeBMap);
+				
 			
 			/*
 			 * Droid 
 			 */
 			droid = (ImageView) findViewById(R.id.droid);
+			Bitmap droidBMap = BitmapFactory.decodeResource(getResources(), R.drawable.droidupdated);
+			droidBMap = Bitmap.createScaledBitmap(	droidBMap, 
+													(windowwidth  / 24)  * 4, 
+													(windowheight  / 32) * 4, 
+													false);
+			droid.setImageBitmap(droidBMap);
 			
-			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
-			marginParams2.setMargins((windowwidth  / 24) * 10, (windowheight / 32) * 8, 0, 0);
-							
-			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);
-			droid.setLayoutParams(layoutdroid);
+			
+//			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
+//			marginParams2.setMargins((windowwidth  / 24) * 10, (windowheight / 32) * 8, 0, 0);
+//							
+//			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);
+//			droid.setLayoutParams(layoutdroid);
 
 			droid.setOnTouchListener(new View.OnTouchListener() {
 
@@ -271,6 +278,7 @@ public class LockScreenAppActivity extends Activity {
 //								System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);
 	
 								v.setVisibility(View.GONE);
+								home.setVisibility(View.GONE);
 	
 								// startActivity(new Intent(Intent.ACTION_VIEW,
 								// Uri.parse("content://contacts/people/")));
@@ -324,8 +332,11 @@ public class LockScreenAppActivity extends Activity {
 								// finish();
 							} else {
 	
-								layoutParams.leftMargin = (windowwidth / 24) * 10;
-								layoutParams.topMargin = (windowheight / 32) * 8;
+								layoutParams.leftMargin = 0;
+								layoutParams.topMargin = (windowheight / 32) * 16;
+																
+//								layout_alignParentLeft="true"
+//							    layout_centerVertical="true"
 								v.setLayoutParams(layoutParams);
 	
 							}
