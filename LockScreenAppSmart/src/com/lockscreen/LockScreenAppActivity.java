@@ -3,6 +3,7 @@ package com.lockscreen;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -184,15 +185,7 @@ public class LockScreenAppActivity extends Activity {
 			windowwidth  = getWindowManager().getDefaultDisplay().getWidth();
 			windowheight = getWindowManager().getDefaultDisplay().getHeight();
 
-			
-			droid = (ImageView) findViewById(R.id.droid);
-			
-			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
-			marginParams2.setMargins((windowwidth  / 24) * 10, (windowheight / 32) * 8, 0, 0);
-							
-			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);
-			droid.setLayoutParams(layoutdroid);
-
+					
 			/*
 			 * phone =(ImageView)findViewById(R.id.phone); MarginLayoutParams
 			 * marginParams = new MarginLayoutParams(phone.getLayoutParams());
@@ -204,15 +197,32 @@ public class LockScreenAppActivity extends Activity {
 					
 //			LinearLayout timelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
 			
-			LinearLayout homelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
-			homelinear.setPadding(0,0,0,(windowheight / 32) * 3);
 			
-			home = (ImageView) findViewById(R.id.home);
-			MarginLayoutParams marginParams1 = new MarginLayoutParams(home.getLayoutParams());
-			marginParams1.setMargins((windowwidth  / 24) * 10, 0, (windowheight / 32) * 8,0);			
-			LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(marginParams1);
-			home.setLayoutParams(layout);
+			/*
+			 * Home
+			 */
+//			LinearLayout homelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
+//			homelinear.setPadding(0,0,0,(windowheight / 32) * 15);
+//			homelinear.setPadding(0,0,0,windowheight/2);
 			
+			
+			home = (ImageView) findViewById(R.id.home);			
+//			MarginLayoutParams marginParams1 = new MarginLayoutParams(home.getLayoutParams());
+//			marginParams1.setMargins((windowwidth  / 24) * 10, 0, (windowheight / 32) * 8,0);			
+//			LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(marginParams1);			
+//			home.setLayoutParams(layout);			
+			
+			
+			/*
+			 * Droid 
+			 */
+			droid = (ImageView) findViewById(R.id.droid);
+			
+			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
+			marginParams2.setMargins((windowwidth  / 24) * 10, (windowheight / 32) * 8, 0, 0);
+							
+			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);
+			droid.setLayoutParams(layoutdroid);
 
 			droid.setOnTouchListener(new View.OnTouchListener() {
 

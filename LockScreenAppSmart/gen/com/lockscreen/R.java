@@ -39,10 +39,9 @@ public final class R {
     }
     public static final class id {
         public static final int droid=0x7f070003;
-        public static final int home=0x7f070005;
-        public static final int homelinearlayout=0x7f070004;
+        public static final int home=0x7f070004;
         public static final int ll_custom_lock_screen=0x7f070000;
-        public static final int phone=0x7f070006;
+        public static final int phone=0x7f070005;
         public static final int textView1=0x7f070002;
         public static final int timelinearlayout=0x7f070001;
     }
