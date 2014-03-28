@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,6 +16,9 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -76,8 +80,19 @@ public class LockScreenAppActivity extends Activity {
 	        String secondi 	= b.getString("secondi");
 	        
 	        if(ora != null && minuti != null){
-	        	clock.setText(ora + " : " + minuti + " : " + secondi);
+	        		        	
+	        	SpannableString ss1 = new SpannableString(ora + ":" + minuti + "" + secondi);
+	        	ss1.setSpan(new RelativeSizeSpan(2f), 0, 5, 0);
+//	        	ss1.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 7, 0);
+	        		        	  	        	
+	        	Typeface type = Typeface.createFromAsset(getAssets(), "stagnati.ttf"); 	        	   
+	        	
+	        	clock.setText(ss1);
+	        	clock.setTextColor(Color.WHITE);
+	        	clock.setTypeface(type);
+	        	
 	        }else{
+	        	
 	        	clock.setText("");
 	        }
 	    }
@@ -92,15 +107,14 @@ public class LockScreenAppActivity extends Activity {
 	    		
 	    		System.out.println(start);
 	    		
+	    		updateUI();
+	    		
 	    		try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-	    		updateUI();
-	    		
 	    	}
 			
 			Message msg = new Message();	        
@@ -116,9 +130,9 @@ public class LockScreenAppActivity extends Activity {
     	Message msg = new Message();
         Bundle bundle = new Bundle();
                        			                       
-        bundle.putString("ora", utility.dxFiller(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), "0", 2));
-        bundle.putString("minuti", utility.dxFiller(String.valueOf(c.get(Calendar.MINUTE)), "0", 2));
-        bundle.putString("secondi", utility.dxFiller(String.valueOf(c.get(Calendar.SECOND)), "0", 2));
+        bundle.putString("ora",  	utility.dxFiller(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 	"0", 2));
+        bundle.putString("minuti", 	utility.dxFiller(String.valueOf(c.get(Calendar.MINUTE)), 		"0", 2));
+        bundle.putString("secondi", utility.dxFiller(String.valueOf(c.get(Calendar.SECOND)), 		"0", 2));
         
         msg.setData(bundle);
         handler.sendMessage(msg);                         
@@ -156,7 +170,7 @@ public class LockScreenAppActivity extends Activity {
 		/*
 		 * CLOCK
 		 */
-		clock = (TextView) findViewById(R.id.textView1);
+		clock = (TextView) findViewById(R.id.clock);
 		start = true;
 		Thread t = new Thread(separateThread);		
         t.start();        
