@@ -18,7 +18,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/line_dashed" />
 
-        	       
+        	        
         <ImageView
             android:id="@+id/droid"
             android:layout_width="wrap_content"
