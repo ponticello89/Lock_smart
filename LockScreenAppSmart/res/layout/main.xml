@@ -5,18 +5,27 @@
     			android:background="@drawable/background"			
     			android:orientation="vertical" >
 
-   
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true" >
 
         <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/line_dashed" />
+
+        	       
+        <ImageView
             android:id="@+id/droid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/droidupdated" />
 
         <ImageView
@@ -24,11 +33,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/droid"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="24dp"
             android:visibility="visible" />
 
     </RelativeLayout>
- 
 
     <TextView
         android:id="@+id/clock"

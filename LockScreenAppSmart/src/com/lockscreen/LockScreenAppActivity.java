@@ -3,6 +3,7 @@ package com.lockscreen;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -48,7 +50,7 @@ public class LockScreenAppActivity extends Activity {
 	
 	boolean start = false;
 
-	private LayoutParams layoutParams;
+	private LayoutParams layoutParams;	
 
 //	@Override
 //	public void onAttachedToWindow() {
@@ -233,17 +235,18 @@ public class LockScreenAppActivity extends Activity {
 			droid = (ImageView) findViewById(R.id.droid);
 			Bitmap droidBMap = BitmapFactory.decodeResource(getResources(), R.drawable.droidupdated);
 			droidBMap = Bitmap.createScaledBitmap(	droidBMap, 
-													(windowwidth  / 24)  * 4, 
-													(windowheight  / 32) * 4, 
+													(windowwidth   / 24)  * 3, 
+													(windowheight  / 32)  * 2, 
 													false);
-			droid.setImageBitmap(droidBMap);
-			
-			
-//			MarginLayoutParams marginParams2 = new MarginLayoutParams(droid.getLayoutParams());
-//			marginParams2.setMargins((windowwidth  / 24) * 10, (windowheight / 32) * 8, 0, 0);
-//							
-//			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);
+			droid.setImageBitmap(droidBMap);						
+//			MarginLayoutParams layoutParams = new MarginLayoutParams(droid.getLayoutParams());
+//			marginParams2.setMargins((windowwidth  / 24) * 3, 0, 0, 0);							
+//			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);			
 //			droid.setLayoutParams(layoutdroid);
+			
+			layoutParams = (LayoutParams) droid.getLayoutParams();
+			layoutParams.leftMargin = (windowwidth / 24) * 2;
+			layoutParams.topMargin  = (windowheight / 32) * 16;
 
 			droid.setOnTouchListener(new View.OnTouchListener() {
 
@@ -251,10 +254,11 @@ public class LockScreenAppActivity extends Activity {
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
 					layoutParams = (LayoutParams) v.getLayoutParams();
-
+					 					
 					switch (event.getAction()) {
 
 						case MotionEvent.ACTION_DOWN:
+														
 							int[] hompos = new int[2];
 							// int[] phonepos=new int[2];
 							droidpos     = new int[2];
@@ -264,7 +268,7 @@ public class LockScreenAppActivity extends Activity {
 							home_y = hompos[1];
 							// phone_x=phonepos[0];
 							// phone_y=phonepos[1];
-	
+							
 							break;
 							
 						case MotionEvent.ACTION_MOVE:
@@ -291,6 +295,8 @@ public class LockScreenAppActivity extends Activity {
 //								System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
 //								System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);
 	
+								
+								
 								v.setVisibility(View.GONE);
 								home.setVisibility(View.GONE);
 	
@@ -345,9 +351,9 @@ public class LockScreenAppActivity extends Activity {
 								// Uri.parse("content://contacts/people/")));
 								// finish();
 							} else {
-	
-								layoutParams.leftMargin = 0;
-								layoutParams.topMargin = (windowheight / 32) * 16;
+
+								layoutParams.leftMargin = (windowwidth / 24) * 2;
+								layoutParams.topMargin  = (windowheight / 32) * 16;
 																
 //								layout_alignParentLeft="true"
 //							    layout_centerVertical="true"
@@ -516,10 +522,9 @@ public class LockScreenAppActivity extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-				
-		start = false;
-		        		
-		System.out.println("onStop" + start);
+	
+		Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		vibrator.vibrate(40);
 		
 		// Don't hang around.
 		// finish();
