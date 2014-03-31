@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="line"> 
+  
+  <!-- 
+  <stroke android:width="4dp" android:color="#D8FDFB" />
+   -->
+  
+  <stroke
+	     android:width="4dp"
+	     android:color="#08213D"
+	     android:dashWidth="10dp"
+	     android:dashGap="5dp" />
+  
+  <!--  
+  <padding android:left="7dp" android:top="7dp" 
+    android:right="7dp" android:bottom="7dp" />
+  -->
+  
+  <!--   
+  <corners android:radius="4dp" /> 
+  
+  <solid android:color="#f0600000"/>
+  -->
+  
+</shape>
+ 
+<!-- 
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android" 
     android:shape="line">
@@ -13,3 +40,4 @@
 	     android:dashGap="5dp" />
 
 </shape>
+ -->
