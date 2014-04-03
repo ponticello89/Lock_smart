@@ -8,29 +8,24 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 
 public class LockScreenAppActivity extends Activity {
 
@@ -41,16 +36,16 @@ public class LockScreenAppActivity extends Activity {
 	int windowwidth;
 	int windowheight;
 	
-	ImageView droid, phone, home;
+	ImageView chiave, phone, lucchetto, circle;
 	private TextView clock;
 	
 	// int phone_x,phone_y;
-	int home_x, home_y;
-	int[] droidpos;
+	int lucchetto_x, lucchetto_y;
+	int[] chiavePos;
 	
 	boolean start = false;
 
-	private LayoutParams layoutParams;	
+	private LayoutParams chiaveLayout, circleLayout;	
 
 //	@Override
 //	public void onAttachedToWindow() {
@@ -220,58 +215,72 @@ public class LockScreenAppActivity extends Activity {
 			/*
 			 * Home
 			 */
-			home = (ImageView) findViewById(R.id.home);
+			lucchetto = (ImageView) findViewById(R.id.lucchetto);
 			Bitmap homeBMap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
 			homeBMap = Bitmap.createScaledBitmap(	homeBMap, 
-													(windowwidth  / 24)  * 5, 
-													(windowheight  / 32) * 4, 
+													(windowheight  / 100) * 10, 
+													(windowheight  / 100) * 10, 
 													false);
-			home.setImageBitmap(homeBMap);
-				
+			lucchetto.setImageBitmap(homeBMap);
+									
+			/*
+			 * Circle Default
+			 */
+			circle = (ImageView) findViewById(R.id.circle);
+			Bitmap circleBMap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
+			circleBMap = Bitmap.createScaledBitmap(	circleBMap, 
+													(windowheight  / 100) * 16, 
+													(windowheight  / 100) * 16, 
+													false);		
+			circle.setImageBitmap(circleBMap);						
+			circleLayout = (LayoutParams) circle.getLayoutParams();
+			circleLayout.leftMargin = (windowwidth  / 100) * 2;
+			circleLayout.topMargin  = (windowheight  / 100) * 42;
 			
 			/*
-			 * Droid 
+			 * Chiave 
 			 */
-			droid = (ImageView) findViewById(R.id.droid);
-			Bitmap droidBMap = BitmapFactory.decodeResource(getResources(), R.drawable.droidupdated);
+			chiave = (ImageView) findViewById(R.id.chiave);
+			Bitmap droidBMap = BitmapFactory.decodeResource(getResources(), R.drawable.chiave);
 			droidBMap = Bitmap.createScaledBitmap(	droidBMap, 
 													(windowwidth   / 24)  * 3, 
 													(windowheight  / 32)  * 2, 
 													false);
-			droid.setImageBitmap(droidBMap);						
-//			MarginLayoutParams layoutParams = new MarginLayoutParams(droid.getLayoutParams());
-//			marginParams2.setMargins((windowwidth  / 24) * 3, 0, 0, 0);							
-//			RelativeLayout.LayoutParams layoutdroid = new RelativeLayout.LayoutParams(marginParams2);			
-//			droid.setLayoutParams(layoutdroid);
+			chiave.setImageBitmap(droidBMap);						
+//			chiave.setBackgroundColor(Color.GREEN);
 			
-			layoutParams = (LayoutParams) droid.getLayoutParams();
-			layoutParams.leftMargin = (windowwidth / 24) * 2;
-			layoutParams.topMargin  = (windowheight / 32) * 16;
-
-			droid.setOnTouchListener(new View.OnTouchListener() {
+			chiaveLayout = (LayoutParams) chiave.getLayoutParams();
+			chiaveLayout.leftMargin = (windowwidth / 24) * 2;
+			chiaveLayout.topMargin  = (windowheight / 32) * 16;
+			
+			chiave.setOnTouchListener(new View.OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					// TODO Auto-generated method stub
-					layoutParams = (LayoutParams) v.getLayoutParams();
+
+					Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+					chiaveLayout = (LayoutParams) v.getLayoutParams();
 					 					
 					switch (event.getAction()) {
 
 						case MotionEvent.ACTION_DOWN:
 														
+							vibrator.vibrate(40);
+														
 							int[] hompos = new int[2];
 							// int[] phonepos=new int[2];
-							droidpos     = new int[2];
+							chiavePos     = new int[2];
 							// phone.getLocationOnScreen(phonepos);
-							home.getLocationOnScreen(hompos);
-							home_x = hompos[0];
-							home_y = hompos[1];
+							lucchetto.getLocationOnScreen(hompos);
+							lucchetto_x = hompos[0];
+							lucchetto_y = hompos[1];
 							// phone_x=phonepos[0];
 							// phone_y=phonepos[1];
 							
 							break;
 							
 						case MotionEvent.ACTION_MOVE:
+							
 							int x_cord = (int) event.getRawX();
 							int y_cord = (int) event.getRawY();
 	
@@ -282,14 +291,19 @@ public class LockScreenAppActivity extends Activity {
 //								y_cord = windowheight - (windowheight / 32) * 2;
 //							}
 	
-							layoutParams.leftMargin = x_cord - (droid.getWidth()/2);
-							layoutParams.topMargin  = y_cord - (droid.getHeight()/2);
+							circleLayout.leftMargin = x_cord - (circle.getWidth() /2);
+							circleLayout.topMargin  = y_cord - (circle.getHeight()/2);								
+							circle.setLayoutParams(circleLayout);
+							
+							
+							chiaveLayout.leftMargin = x_cord - (chiave.getWidth() /2);
+							chiaveLayout.topMargin  = y_cord - (chiave.getHeight()/2);
 	
-							droid.getLocationOnScreen(droidpos);
-							v.setLayoutParams(layoutParams);
+							chiave.getLocationOnScreen(chiavePos);
+							v.setLayoutParams(chiaveLayout);
 	
-							if ((	(x_cord - home_x) <= (windowwidth / 24) * 5 && (home_x - x_cord) <= (windowwidth / 24) * 4) && 
-									((home_y - y_cord) <= (windowheight / 32) * 5)) {
+							if ((	(x_cord - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord) <= (windowwidth / 24) * 4) && 
+									((lucchetto_y - y_cord) <= (windowheight / 32) * 5)) {
 								
 //								System.out.println("home overlapps");
 //								System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
@@ -298,7 +312,7 @@ public class LockScreenAppActivity extends Activity {
 								
 								
 								v.setVisibility(View.GONE);
-								home.setVisibility(View.GONE);
+								lucchetto.setVisibility(View.GONE);
 	
 								// startActivity(new Intent(Intent.ACTION_VIEW,
 								// Uri.parse("content://contacts/people/")));
@@ -335,8 +349,8 @@ public class LockScreenAppActivity extends Activity {
 							int x_cord1 = (int) event.getRawX();
 							int y_cord2 = (int) event.getRawY();
 	
-							if (((x_cord1 - home_x) <= (windowwidth / 24) * 5 && (home_x - x_cord1) <= (windowwidth / 24) * 4)
-									&& ((home_y - y_cord2) <= (windowheight / 32) * 5)) {
+							if (((x_cord1 - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord1) <= (windowwidth / 24) * 4)
+									&& ((lucchetto_y - y_cord2) <= (windowheight / 32) * 5)) {
 								
 //								System.out.println("home overlapps");
 //								System.out.println("homeee" + home_x + "  "
@@ -352,12 +366,16 @@ public class LockScreenAppActivity extends Activity {
 								// finish();
 							} else {
 
-								layoutParams.leftMargin = (windowwidth / 24) * 2;
-								layoutParams.topMargin  = (windowheight / 32) * 16;
+								circleLayout.leftMargin = (windowwidth  / 100) * 2;
+								circleLayout.topMargin  = (windowheight  / 100) * 42;				
+								circle.setLayoutParams(circleLayout);
+								
+								chiaveLayout.leftMargin = (windowwidth / 24) * 2;
+								chiaveLayout.topMargin  = (windowheight / 32) * 16;
 																
 //								layout_alignParentLeft="true"
 //							    layout_centerVertical="true"
-								v.setLayoutParams(layoutParams);
+								v.setLayoutParams(chiaveLayout);
 	
 							}
 
@@ -435,10 +453,10 @@ public class LockScreenAppActivity extends Activity {
 				y_cord = windowheight;
 			}
 
-			layoutParams.leftMargin = x_cord - 25;
-			layoutParams.topMargin = y_cord - 75;
+			chiaveLayout.leftMargin = x_cord - 25;
+			chiaveLayout.topMargin = y_cord - 75;
 
-			view.setLayoutParams(layoutParams);
+			view.setLayoutParams(chiaveLayout);
 			break;
 
 		default:

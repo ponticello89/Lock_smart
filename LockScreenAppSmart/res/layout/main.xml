@@ -18,18 +18,28 @@
             android:layout_centerVertical="true"
             android:src="@drawable/line_dashed" />
 
+        <ImageView
+            android:id="@+id/circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"            
+            />
+            <!-- 
+            android:src="@drawable/circle" 
+            android:layout_marginLeft="10dp"
+            --> 
         	        
         <ImageView
-            android:id="@+id/droid"
+            android:id="@+id/chiave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/droidupdated" />
+            android:src="@drawable/chiave" />
 
         <ImageView
-            android:id="@+id/home"
+            android:id="@+id/lucchetto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
