@@ -11,6 +11,7 @@
         android:layout_alignParentLeft="true" >
 
         <ImageView
+            android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:layout_alignParentLeft="true"
@@ -22,13 +23,8 @@
             android:id="@+id/circle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"            
-            />
-            <!-- 
-            android:src="@drawable/circle" 
-            android:layout_marginLeft="10dp"
-            --> 
-        	        
+            android:layout_alignParentLeft="true" />        
+
         <ImageView
             android:id="@+id/chiave"
             android:layout_width="wrap_content"
@@ -60,7 +56,22 @@
 		android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="2"
-        android:text="TextView"
-        android:textSize="40dp" />
+        android:text="12:12"
+        android:textSize="40dp"/>
+    
+    <TextView
+            android:id="@+id/second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"            
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="68dp"
+            android:layout_marginTop="115dp"
+            android:shadowColor="#A69F9F"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="26"
+            android:textSize="40dp" />
+    
 
 </RelativeLayout>

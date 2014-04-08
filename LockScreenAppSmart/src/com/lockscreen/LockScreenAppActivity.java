@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,8 +34,10 @@ public class LockScreenAppActivity extends Activity {
 	int windowwidth;
 	int windowheight;
 	
-	ImageView chiave, phone, lucchetto, circle;
+	ImageView chiave, phone, lucchetto; 
+	ImageView circle;
 	private TextView clock;
+	private TextView second;
 	
 	// int phone_x,phone_y;
 	int lucchetto_x, lucchetto_y;
@@ -78,19 +78,24 @@ public class LockScreenAppActivity extends Activity {
 	        
 	        if(ora != null && minuti != null){
 	        		        	
-	        	SpannableString ss1 = new SpannableString(ora + ":" + minuti + "" + secondi);
-	        	ss1.setSpan(new RelativeSizeSpan(2f), 0, 5, 0);
+	        	SpannableString clockSS = new SpannableString(ora + ":" + minuti);
+	        	clockSS.setSpan(new RelativeSizeSpan(2f), 0, 5, 0);
 //	        	ss1.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 7, 0);
 	        		        	  	        	
-	        	Typeface type = Typeface.createFromAsset(getAssets(), "stagnati.ttf"); 	        	   
+	        	Typeface font = Typeface.createFromAsset(getAssets(), "stagnati.ttf"); 	        	   
 	        	
-	        	clock.setText(ss1);
+	        	clock.setText(clockSS);
 	        	clock.setTextColor(Color.WHITE);
-	        	clock.setTypeface(type);
+	        	clock.setTypeface(font);
 	        	
-	        }else{
+	        	SpannableString secondSS = new SpannableString(secondi);
+	        	second.setText(secondSS);
+	        	second.setTextColor(Color.WHITE);
+	        	second.setTypeface(font);
 	        	
+	        }else{	        	
 	        	clock.setText("");
+	        	second.setText("");
 	        }
 	    }
     };
@@ -167,7 +172,8 @@ public class LockScreenAppActivity extends Activity {
 		/*
 		 * CLOCK
 		 */
-		clock = (TextView) findViewById(R.id.clock);
+		clock  = (TextView) findViewById(R.id.clock);
+		second = (TextView) findViewById(R.id.second);
 		start = true;
 		Thread t = new Thread(separateThread);		
         t.start();        
@@ -231,7 +237,7 @@ public class LockScreenAppActivity extends Activity {
 			circleBMap = Bitmap.createScaledBitmap(	circleBMap, 
 													(windowheight  / 100) * 16, 
 													(windowheight  / 100) * 16, 
-													false);		
+													false);					
 			circle.setImageBitmap(circleBMap);						
 			circleLayout = (LayoutParams) circle.getLayoutParams();
 			circleLayout.leftMargin = (windowwidth  / 100) * 2;
