@@ -2,6 +2,8 @@ package com.lockscreen;
 
 import java.util.Calendar;
 
+import receiver.lockScreenReeiver;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -162,6 +164,7 @@ public class LockScreenAppActivity extends Activity {
 								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
 								WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		lockScreenReeiver rec = new lockScreenReeiver();
 		
 		/*
 		 * LAYOUT
