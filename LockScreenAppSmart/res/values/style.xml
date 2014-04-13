@@ -8,4 +8,7 @@
     <item name="android:windowIsFloating">true</item>
     <item name="android:backgroundDimEnabled">false</item>
   </style>
+  
+ 	<style name="SliderTheme" parent="@android:style/Theme.Translucent.NoTitleBar" />
+ 	<style name="Theme.MyTheme" parent="@android:style/Theme.Wallpaper.NoTitleBar" />
 </resources>

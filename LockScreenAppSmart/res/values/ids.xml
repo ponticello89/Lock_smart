@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="ampm" />
+    <item type="id" name="battery" />
+    <item type="id" name="data" />
+    <item type="id" name="frame">false</item>
+    <item type="id" name="background">false</item>
+    <item type="id" name="not_call">false</item>
+    <item type="id" name="not_message">false</item>
+    <item type="id" name="not_mail">false</item>
+    <item type="id" name="torch">false</item>
+    <item type="id" name="bottombar">false</item>
+    <item type="id" name="musicpanel">false</item>
+    <item type="id" name="clock">false</item>
+    <item type="id" name="unlock">false</item>
+    <item type="id" name="setAsLockscreen">false</item>
+    <item type="id" name="lockscreenSettings">false</item>
+    <item type="id" name="button_prev">false</item>
+    <item type="id" name="button_togleplay">false</item>
+    <item type="id" name="button_next">false</item>
+    <item type="id" name="title">false</item>
+    <item type="id" name="artist">false</item>
+    <item type="id" name="album">false</item>
+    <item type="id" name="not_icon">false</item>
+    <item type="id" name="action_settings">false</item>
+</resources>

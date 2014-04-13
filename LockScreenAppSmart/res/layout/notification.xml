@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout 	android:gravity="center_vertical" 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				xmlns:android="http://schemas.android.com/apk/res/android">
+				
+    <LinearLayout 	android:gravity="center_vertical" 
+        			android:orientation="horizontal" 
+        			android:padding="3.0dip" 
+        			android:layout_width="fill_parent" 
+        			android:layout_height="wrap_content">
+        
+		<ImageView 	android:id="@id/not_icon" 
+		    		android:padding="5.0dip" 
+		    		android:layout_width="36.0dip" 
+		    		android:layout_height="36.0dip"  />
+		    		<!-- android:onClick="onClick" -->
+        
+		<TextView 	android:textColor="@android:color/white" 
+		    		android:id="@id/not_message" 
+		    		android:layout_width="wrap_content" 
+		    		android:layout_height="wrap_content" 
+		    		android:layout_marginLeft="5.0dip" 
+		    		android:layout_marginRight="5.0dip" 
+		    		android:text="Notification example" 
+		    		android:maxLines="2" />
+    
+	</LinearLayout>
+</FrameLayout>

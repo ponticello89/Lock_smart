@@ -4,8 +4,10 @@ import java.util.Calendar;
 
 import receiver.lockScreenReeiver;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,11 +21,16 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -41,13 +48,20 @@ public class LockScreenAppActivity extends Activity {
 	private TextView clock;
 	private TextView second;
 	
+	ListView notificationList;
+	
 	// int phone_x,phone_y;
 	int lucchetto_x, lucchetto_y;
 	int[] chiavePos;
 	
 	boolean start = false;
+	boolean lock = false;
 
-	private LayoutParams chiaveLayout, circleLayout;	
+	private LayoutParams chiaveLayout, circleLayout, pageLayout;
+	
+	private RelativeLayout page;
+	
+	
 
 //	@Override
 //	public void onAttachedToWindow() {
@@ -81,18 +95,18 @@ public class LockScreenAppActivity extends Activity {
 	        if(ora != null && minuti != null){
 	        		        	
 	        	SpannableString clockSS = new SpannableString(ora + ":" + minuti);
-	        	clockSS.setSpan(new RelativeSizeSpan(2f), 0, 5, 0);
-//	        	ss1.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 7, 0);
+	        	clockSS.setSpan(new RelativeSizeSpan(1f), 0, 5, 0);
+	        	clockSS.setSpan(new StyleSpan(Typeface.BOLD), 0, 2, 0);
 	        		        	  	        	
-	        	Typeface font = Typeface.createFromAsset(getAssets(), "stagnati.ttf"); 	        	   
+	        	Typeface font = Typeface.createFromAsset(getAssets(), "neue.ttf"); 	        	   
 	        	
-	        	clock.setText(clockSS);
-	        	clock.setTextColor(Color.WHITE);
+	        	clock.setText(clockSS);	        	
 	        	clock.setTypeface(font);
 	        	
+	        	Log.e("LockScreenAppActivity", clock.getLineHeight()+"");
+	        	
 	        	SpannableString secondSS = new SpannableString(secondi);
-	        	second.setText(secondSS);
-	        	second.setTextColor(Color.WHITE);
+	        	second.setText(secondSS);	        	
 	        	second.setTypeface(font);
 	        	
 	        }else{	        	
@@ -146,9 +160,14 @@ public class LockScreenAppActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		System.out.println("onCreate");
 		
+		lock = true;
+		
 		super.onCreate(savedInstanceState);
 		
 		Utility utility = new Utility();
+		
+		windowwidth  = getWindowManager().getDefaultDisplay().getWidth();
+		windowheight = getWindowManager().getDefaultDisplay().getHeight();
 		
 		/*
 		 * SOUND DEFAULT LOCK SCREEN
@@ -164,27 +183,53 @@ public class LockScreenAppActivity extends Activity {
 								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
 								WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		lockScreenReeiver rec = new lockScreenReeiver();
+//		lockScreenReeiver rec = new lockScreenReeiver();
 		
 		/*
 		 * LAYOUT
 		 */
 		setContentView(R.layout.main);
 		
+		page = (RelativeLayout) findViewById(R.id.page);
+//		page.setBackgroundColor(color.white);
+		
+		notificationList = (ListView) findViewById(R.id.notificationList);		
+		ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) notificationList.getLayoutParams();
+		marginLayoutParams.setMargins(	20, 
+        								(windowheight  / 100) * 70, 
+        								20, 
+        								0);
 		
 		/*
 		 * CLOCK
 		 */
 		clock  = (TextView) findViewById(R.id.clock);
+		clock.setTextColor(Color.BLACK);
+    	clock.setTextSize(80);
+    	
 		second = (TextView) findViewById(R.id.second);
+		second.setTextColor(Color.BLACK);
+		
 		start = true;
 		Thread t = new Thread(separateThread);		
-        t.start();        
- 
+        t.start();   
         
-		Calendar c = Calendar.getInstance();
-		clock.setText(c.get(Calendar.HOUR_OF_DAY) + " : " + c.get(Calendar.MINUTE) + " : " + c.get(Calendar.SECOND) );
-        
+		marginLayoutParams = (ViewGroup.MarginLayoutParams) clock.getLayoutParams();
+		marginLayoutParams.setMargins(	20, 
+        								(windowheight  / 100) * 10, 
+        								20, 
+        								0);
+		
+		Log.e("LockScreenAppActivity", "...."+clock.getLineHeight()+"");
+		
+		marginLayoutParams = (ViewGroup.MarginLayoutParams) second.getLayoutParams();
+		marginLayoutParams.setMargins(	20, 
+        								(windowheight  / 100) * 10 + clock.getLineHeight(), 
+        								20, 
+        								0);
+		
+		     
+                
 		/*
 		 *  BOH GESTIONE VARIA
 		 */	
@@ -203,12 +248,7 @@ public class LockScreenAppActivity extends Activity {
 			StateListener phoneStateListener = new StateListener();
 			TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 			telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-
-			
-			windowwidth  = getWindowManager().getDefaultDisplay().getWidth();
-			windowheight = getWindowManager().getDefaultDisplay().getHeight();
-
-					
+										
 			/*
 			 * phone =(ImageView)findViewById(R.id.phone); MarginLayoutParams
 			 * marginParams = new MarginLayoutParams(phone.getLayoutParams());
@@ -245,6 +285,8 @@ public class LockScreenAppActivity extends Activity {
 			circleLayout = (LayoutParams) circle.getLayoutParams();
 			circleLayout.leftMargin = (windowwidth  / 100) * 2;
 			circleLayout.topMargin  = (windowheight  / 100) * 42;
+			
+//			pageLayout = (LayoutParams) page.getLayoutParams();
 			
 			/*
 			 * Chiave 
@@ -304,6 +346,10 @@ public class LockScreenAppActivity extends Activity {
 							circleLayout.topMargin  = y_cord - (circle.getHeight()/2);								
 							circle.setLayoutParams(circleLayout);
 							
+//							pageLayout.leftMargin = x_cord;
+//							pageLayout.topMargin = y_cord;
+//							page.setLayoutParams(pageLayout);
+//							page.requestLayout();
 							
 							chiaveLayout.leftMargin = x_cord - (chiave.getWidth() /2);
 							chiaveLayout.topMargin  = y_cord - (chiave.getHeight()/2);
@@ -325,7 +371,8 @@ public class LockScreenAppActivity extends Activity {
 	
 								// startActivity(new Intent(Intent.ACTION_VIEW,
 								// Uri.parse("content://contacts/people/")));
-								finish();
+								
+								unloack();
 								
 							} else {
 								
@@ -427,17 +474,17 @@ public class LockScreenAppActivity extends Activity {
 
 			super.onCallStateChanged(state, incomingNumber);
 			switch (state) {
-			case TelephonyManager.CALL_STATE_RINGING:
-				break;
-
-			case TelephonyManager.CALL_STATE_OFFHOOK:
-				System.out.println("call Activity off hook");
-				finish();
-
-				break;
-
-			case TelephonyManager.CALL_STATE_IDLE:
-				break;
+				case TelephonyManager.CALL_STATE_RINGING:
+					break;
+	
+				case TelephonyManager.CALL_STATE_OFFHOOK:
+					System.out.println("call Activity off hook");
+					finish();
+	
+					break;
+	
+				case TelephonyManager.CALL_STATE_IDLE:
+					break;
 			}
 		}
 	};
@@ -509,10 +556,7 @@ public class LockScreenAppActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-
-		System.out.println("onBackPressed");
-		
-		// Don't allow back to dismiss.
+		System.out.println("onBackPressed");		
 		return;
 	}
 
@@ -520,13 +564,7 @@ public class LockScreenAppActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-
-		start = false;
-		
-		System.out.println("onPause");
-		
-		// Don't hang around.
-		// finish();
+		start = false;		
 	}
 
 	@Override
@@ -535,28 +573,24 @@ public class LockScreenAppActivity extends Activity {
 
 		start = true;		
 		Thread t = new Thread(separateThread);		
-        t.start();   
-		
-		System.out.println("onResume");
-		
-		// Don't hang around.
-		// finish();
+        t.start();   		
 	}
 
-	
-
-	
 	@Override
 	protected void onStop() {
 		super.onStop();
-	
-		Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		vibrator.vibrate(40);
-		
-		// Don't hang around.
-		// finish();
 	}
-
+	
+//	public void onWindowFocusChanged(boolean hasFocus) {				
+////        if((!exit) && (!hasFocus)) {
+////            Log.e("TAG", "Broadacst ginlemon.smartlauncher.lock");
+////            sendBroadcast(new Intent("ginlemon.smartlauncher.lock"));
+////        }
+////        startService(service)
+////        super.onWindowFocusChanged(hasFocus);
+//		return;
+//    }
+	
 	@Override
 	public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
 		
@@ -599,14 +633,19 @@ public class LockScreenAppActivity extends Activity {
 		return false;
 
 	}
-
-	/*
-	 * public void unloack(){
-	 * 
-	 * finish();
-	 * 
-	 * }
-	 */
+	
+	public void unloack(){
+		
+		if(lock){
+			Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			vibrator.vibrate(40);
+			
+			page.setMinimumHeight(100);
+		}
+		
+		lock = false;
+		finish();	 
+	}
 
 	public void onDestroy() {
 		System.out.println("onDestroy");
