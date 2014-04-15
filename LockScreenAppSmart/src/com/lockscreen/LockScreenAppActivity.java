@@ -2,16 +2,15 @@ package com.lockscreen;
 
 import java.util.Calendar;
 
-import receiver.lockScreenReeiver;
-
-import android.R.color;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -191,8 +190,30 @@ public class LockScreenAppActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		page = (RelativeLayout) findViewById(R.id.page);
-//		page.setBackgroundColor(color.white);
 		
+		//*********************************//
+		//**Experiment*********************//
+		BitmapFactory.Options options=new BitmapFactory.Options();
+		options.inSampleSize = 3;				
+//		Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(), R.drawable.background, options);		
+		
+//		page.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.background, options), 0, 0, 300, 300)));
+		
+//		bitmapOrg = Bitmap.createBitmap(bitmapOrg, 0, 0, bitmapOrg.getWidth()/2, bitmapOrg.getHeight()/2);
+		
+		// make a Drawable from Bitmap to allow to set the BitMap 
+		// to the ImageView, ImageButton or what ever
+//		Drawable bmd = new BitmapDrawable(bitmapOrg);		
+//		bitmapOrg = null;		
+//		page.setBackgroundDrawable(bmd);
+		
+//		ImageView imageView = new ImageView(this);
+//		// set the Drawable on the ImageView
+//		imageView.setImageDrawable(bmd);
+		
+		
+		//*********************************//
+				
 		notificationList = (ListView) findViewById(R.id.notificationList);		
 		ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) notificationList.getLayoutParams();
 		marginLayoutParams.setMargins(	20, 
@@ -270,7 +291,7 @@ public class LockScreenAppActivity extends Activity {
 													(windowheight  / 100) * 10, 
 													(windowheight  / 100) * 10, 
 													false);
-			lucchetto.setImageBitmap(homeBMap);
+			lucchetto.setImageBitmap(homeBMap);			
 									
 			/*
 			 * Circle Default
