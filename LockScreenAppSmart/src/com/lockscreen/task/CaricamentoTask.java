@@ -47,7 +47,7 @@ public class CaricamentoTask extends AsyncTask<String, Void, String> {
 		
 //		ImageView imageView = new ImageView(this);
 //		// set the Drawable on the ImageView
-		page.setImageBitmap(bitmapOrg);
+//		page.setImageBitmap(bitmapOrg);
 		
 		
 		//*********************************//
