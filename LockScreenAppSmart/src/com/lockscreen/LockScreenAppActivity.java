@@ -46,6 +46,7 @@ public class LockScreenAppActivity extends Activity {
 	
 	ImageView chiave, phone, lucchetto; 
 	ImageView circle;
+	ImageView bgkk;
 	private TextView clock;
 	private TextView second;
 	
@@ -192,8 +193,10 @@ public class LockScreenAppActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		page = (RelativeLayout) findViewById(R.id.page);
+		
+		bgkk = (ImageView) findViewById(R.id.bgkk);
 				
-		CaricamentoTask task = new CaricamentoTask(getResources(), page);
+		CaricamentoTask task = new CaricamentoTask(getResources(), bgkk);
 	    task.execute();
 //		
 //		//*********************************//
