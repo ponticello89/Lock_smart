@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import com.lockscreen.task.CaricamentoTask;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -160,7 +161,7 @@ public class LockScreenAppActivity extends Activity {
 	
 
 	public void onCreate(Bundle savedInstanceState) {
-		System.out.println("onCreate");
+		Log.e("LockScreenAppActivity", "Start OnCreate --->");
 		
 		lock = true;
 		
@@ -192,35 +193,11 @@ public class LockScreenAppActivity extends Activity {
 		 */
 		setContentView(R.layout.main);
 		
-		page = (RelativeLayout) findViewById(R.id.page);
+		page = (RelativeLayout) findViewById(R.id.page);				
+		bgkk = (ImageView) findViewById(R.id.bgkk);		
 		
-		bgkk = (ImageView) findViewById(R.id.bgkk);
-				
-		CaricamentoTask task = new CaricamentoTask(getResources(), bgkk);
+		CaricamentoTask task = new CaricamentoTask(bgkk, getResources());
 	    task.execute();
-//		
-//		//*********************************//
-//		//**Experiment*********************//
-//		BitmapFactory.Options options=new BitmapFactory.Options();
-//		options.inSampleSize = 3;				
-//		Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(), R.drawable.background, options);		
-//		
-////		page.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.background, options), 0, 0, 300, 300)));
-//		
-////		bitmapOrg = Bitmap.createBitmap(bitmapOrg, 0, 0, bitmapOrg.getWidth()/2, bitmapOrg.getHeight()/2);
-//		
-//		// make a Drawable from Bitmap to allow to set the BitMap 
-//		// to the ImageView, ImageButton or what ever
-////		Drawable bmd = new BitmapDrawable(bitmapOrg);		
-////		bitmapOrg = null;		
-////		page.setBackgroundDrawable(bmd);
-//		
-////		ImageView imageView = new ImageView(this);
-////		// set the Drawable on the ImageView
-////		imageView.setImageDrawable(bmd);
-//		
-//		
-//		//*********************************//
 				
 		notificationList = (ListView) findViewById(R.id.notificationList);		
 		ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) notificationList.getLayoutParams();
@@ -313,7 +290,7 @@ public class LockScreenAppActivity extends Activity {
 			circle.setImageBitmap(circleBMap);						
 			circleLayout = (LayoutParams) circle.getLayoutParams();
 			circleLayout.leftMargin = (windowwidth  / 100) * 2;
-			circleLayout.topMargin  = (windowheight  / 100) * 42;
+			circleLayout.topMargin  = ((windowheight  / 100) * 50) - (circleBMap.getHeight()/2);
 			
 //			pageLayout = (LayoutParams) page.getLayoutParams();
 			
@@ -495,6 +472,7 @@ public class LockScreenAppActivity extends Activity {
 			// TODO: handle exception
 		}
 
+		Log.e("LockScreenAppActivity", "Finish OnCreate ---|");
 	}
 
 	class StateListener extends PhoneStateListener {

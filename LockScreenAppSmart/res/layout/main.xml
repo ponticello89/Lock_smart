@@ -14,7 +14,8 @@
         <ImageView
             android:id="@+id/bgkk"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"            
+            android:background="@android:color/black" />
         
         <ImageView
             android:id="@+id/imageView1"
