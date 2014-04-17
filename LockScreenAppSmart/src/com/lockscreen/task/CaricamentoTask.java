@@ -18,17 +18,20 @@ import android.widget.RelativeLayout;
 
 public class CaricamentoTask extends AsyncTask<String, Void, Bitmap> {
 
-	private ImageView imv;
-    private String path;
+	private String cosaCaricare;
+	
+	public static String bkgUp 		= "backGroundUp";
+	public static String bkgDown 	= "backGroundDown";
+	
+	private ImageView imv;    
     private Resources res;
 
-    public CaricamentoTask(ImageView imv, Resources res) {
+    public CaricamentoTask(ImageView imv, Resources res, String cosaCaricare) {
     	Log.e("CaricamentoTask", "Start CaricamentoTask --->");
     	
-    	this.imv = imv;
-//    	this.imv.setBackgroundColor(Color.BLACK);
-    	
-    	this.res = res;
+    	this.imv 			= imv;
+    	this.res 			= res;
+    	this.cosaCaricare 	= cosaCaricare;
     	
     	Log.e("CaricamentoTask", "Finish CaricamentoTask ---|");
     }
@@ -41,9 +44,16 @@ public class CaricamentoTask extends AsyncTask<String, Void, Bitmap> {
     	Bitmap bitmap = null;
        	 	
     	BitmapFactory.Options optionBitMap = new BitmapFactory.Options();
-    	optionBitMap.inSampleSize = 2;    
-    	bitmap = BitmapFactory.decodeResource(res, R.drawable.background, optionBitMap);	    	
-    	bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth()/2, bitmap.getHeight()/2);
+    	optionBitMap.inSampleSize = 3;    
+    	
+    	if(cosaCaricare.equals(bkgUp)){
+    		bitmap = BitmapFactory.decodeResource(res, R.drawable.background, optionBitMap);	    	
+    		bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight()/2);
+    		
+    	}else if(cosaCaricare.equals(bkgDown)){
+    		bitmap = BitmapFactory.decodeResource(res, R.drawable.background, optionBitMap);	    	
+    		bitmap = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight()/2, bitmap.getWidth(), bitmap.getHeight()/2);
+    	}
     	
     	Log.e("CaricamentoTask", "Finish DoInBackground ---|");
         return bitmap;        
@@ -53,8 +63,9 @@ public class CaricamentoTask extends AsyncTask<String, Void, Bitmap> {
     	Log.e("CaricamentoTask", "Start OnPostExecute --->");
     	
     	BitmapDrawable bitMapDraweble = new BitmapDrawable(bitMap);
-    	
+    	bitMap = null;
     	imv.setBackgroundDrawable(bitMapDraweble);
+    	bitMapDraweble = null;
     	
     	Log.e("CaricamentoTask", "Finish OnPostExecute ---|");
     }

@@ -2,18 +2,12 @@ package com.lockscreen;
 
 import java.util.Calendar;
 
-import com.lockscreen.task.CaricamentoTask;
-
-import android.R.color;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +30,8 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.lockscreen.task.CaricamentoTask;
+
 public class LockScreenAppActivity extends Activity {
 
 	/** Called when the activity is first created. */
@@ -47,7 +43,8 @@ public class LockScreenAppActivity extends Activity {
 	
 	ImageView chiave, phone, lucchetto; 
 	ImageView circle;
-	ImageView bgkk;
+	ImageView bgkUp, bgkDown;
+	
 	private TextView clock;
 	private TextView second;
 	
@@ -193,14 +190,33 @@ public class LockScreenAppActivity extends Activity {
 		 */
 		setContentView(R.layout.main);
 		
-		page = (RelativeLayout) findViewById(R.id.page);				
-		bgkk = (ImageView) findViewById(R.id.bgkk);		
+		page = (RelativeLayout) findViewById(R.id.page);
 		
-		CaricamentoTask task = new CaricamentoTask(bgkk, getResources());
+		ViewGroup.MarginLayoutParams marginLayoutParams;
+		Bitmap bitmap;
+		
+		bgkUp = (ImageView) findViewById(R.id.bgkUp);
+		marginLayoutParams = (ViewGroup.MarginLayoutParams) bgkUp.getLayoutParams();
+		marginLayoutParams.setMargins(	0, 
+        								0, 
+        								0, 
+        								(windowheight  / 100) * 50);
+		CaricamentoTask task = new CaricamentoTask(bgkUp, getResources(), CaricamentoTask.bkgUp);
 	    task.execute();
+	    
+		bgkDown = (ImageView) findViewById(R.id.bgkDown);
+		marginLayoutParams = (ViewGroup.MarginLayoutParams) bgkDown.getLayoutParams();
+		marginLayoutParams.setMargins(	0, 
+										(windowheight  / 100) * 50, 
+        								0, 
+        								0);
+		task = new CaricamentoTask(bgkDown, getResources(), CaricamentoTask.bkgDown);
+	    task.execute();
+		
+		
 				
 		notificationList = (ListView) findViewById(R.id.notificationList);		
-		ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) notificationList.getLayoutParams();
+		marginLayoutParams = (ViewGroup.MarginLayoutParams) notificationList.getLayoutParams();
 		marginLayoutParams.setMargins(	20, 
         								(windowheight  / 100) * 70, 
         								20, 
@@ -271,44 +287,43 @@ public class LockScreenAppActivity extends Activity {
 			 * Home
 			 */
 			lucchetto = (ImageView) findViewById(R.id.lucchetto);
-			Bitmap homeBMap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
-			homeBMap = Bitmap.createScaledBitmap(	homeBMap, 
+			bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
+			bitmap = Bitmap.createScaledBitmap(	bitmap, 
 													(windowheight  / 100) * 10, 
 													(windowheight  / 100) * 10, 
 													false);
-			lucchetto.setImageBitmap(homeBMap);			
+			lucchetto.setImageBitmap(bitmap);			
 									
 			/*
 			 * Circle Default
 			 */
 			circle = (ImageView) findViewById(R.id.circle);
-			Bitmap circleBMap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
-			circleBMap = Bitmap.createScaledBitmap(	circleBMap, 
+			bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
+			bitmap = Bitmap.createScaledBitmap(	bitmap, 
 													(windowheight  / 100) * 16, 
 													(windowheight  / 100) * 16, 
 													false);					
-			circle.setImageBitmap(circleBMap);						
+			circle.setImageBitmap(bitmap);						
 			circleLayout = (LayoutParams) circle.getLayoutParams();
 			circleLayout.leftMargin = (windowwidth  / 100) * 2;
-			circleLayout.topMargin  = ((windowheight  / 100) * 50) - (circleBMap.getHeight()/2);
+			circleLayout.topMargin  = ((windowheight  / 100) * 50) - (bitmap.getHeight()/2);
 			
-//			pageLayout = (LayoutParams) page.getLayoutParams();
 			
 			/*
 			 * Chiave 
 			 */
 			chiave = (ImageView) findViewById(R.id.chiave);
-			Bitmap droidBMap = BitmapFactory.decodeResource(getResources(), R.drawable.chiave);
-			droidBMap = Bitmap.createScaledBitmap(	droidBMap, 
+			bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.chiave);
+			bitmap = Bitmap.createScaledBitmap(	bitmap, 
 													(windowwidth   / 24)  * 3, 
 													(windowheight  / 32)  * 2, 
 													false);
-			chiave.setImageBitmap(droidBMap);						
-//			chiave.setBackgroundColor(Color.GREEN);
-			
+			chiave.setImageBitmap(bitmap);									
 			chiaveLayout = (LayoutParams) chiave.getLayoutParams();
 			chiaveLayout.leftMargin = (windowwidth / 24) * 2;
 			chiaveLayout.topMargin  = (windowheight / 32) * 16;
+			
+			bitmap = null;
 			
 			chiave.setOnTouchListener(new View.OnTouchListener() {
 

@@ -12,7 +12,13 @@
 		<!-- android:background="@drawable/background"  -->
         
         <ImageView
-            android:id="@+id/bgkk"
+            android:id="@+id/bgkUp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"            
+            android:background="@android:color/black" />
+        
+        <ImageView
+            android:id="@+id/bgkDown"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"            
             android:background="@android:color/black" />
