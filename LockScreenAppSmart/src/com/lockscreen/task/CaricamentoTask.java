@@ -25,7 +25,7 @@ public class CaricamentoTask extends AsyncTask<String, Void, Bitmap> {
 	
 	private ImageView imv;    
     private Resources res;
-
+    
     public CaricamentoTask(ImageView imv, Resources res, String cosaCaricare) {
     	Log.e("CaricamentoTask", "Start CaricamentoTask --->");
     	
@@ -63,7 +63,14 @@ public class CaricamentoTask extends AsyncTask<String, Void, Bitmap> {
     	Log.e("CaricamentoTask", "Start OnPostExecute --->");
     	
     	BitmapDrawable bitMapDraweble = new BitmapDrawable(bitMap);
-    	bitMap = null;
+    	try{
+    		if(bitMap.isRecycled()){
+    			Log.e("CaricamentoTask", "Reciclata");
+    			bitMap.recycle();
+    		}
+    		bitMap = null; 
+    	}catch(Exception e){}
+    	
     	imv.setBackgroundDrawable(bitMapDraweble);
     	bitMapDraweble = null;
     	

@@ -150,6 +150,7 @@ public class NotificationList extends ListView{
 		
 		super.onDetachedFromWindow();
 		getContext().unregisterReceiver(this.notifyreceiver);
+		this.notifyreceiver.clearAbortBroadcast();		
 	}
 
 //  public boolean onTouchEvent(MotionEvent paramMotionEvent)

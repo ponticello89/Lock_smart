@@ -84,7 +84,7 @@
             android:shadowRadius="2"
             android:text="26"
             android:textSize="40dp" />
-    
+        
 	<com.lockscreen.NotificationList 	
 	    								android:id="@+id/notificationList"
 	    								android:background="@drawable/bkg" 
@@ -96,4 +96,5 @@
 	    								android:layout_marginRight="20.0dip" 
 	    								android:layout_marginBottom="100.0dip" 
 	    								android:listSelector="@android:color/transparent"/>
+	
 </RelativeLayout>

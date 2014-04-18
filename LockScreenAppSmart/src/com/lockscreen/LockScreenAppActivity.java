@@ -54,35 +54,60 @@ public class LockScreenAppActivity extends Activity {
 	int lucchetto_x, lucchetto_y;
 	int[] chiavePos;
 	
-	boolean start = false;
-	boolean lock = false;
+	boolean start 			= false;
+	boolean lock 			= true;
+	boolean initEseguito 	= false;
 
 	private LayoutParams chiaveLayout, circleLayout, pageLayout;
 	
 	private RelativeLayout page;
 	
 	
-
-//	@Override
-//	public void onAttachedToWindow() {
-//		System.out.println("onAttachedToWindow");
-//		
-//		// TODO Auto-generated method stub		
-//		this.getWindow().setType(	WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG | 
-//									WindowManager.LayoutParams.FLAG_FULLSCREEN |
-//									WindowManager.LayoutParams.TYPE_KEYGUARD);
-//		
-////		System.out.println("onAttachedToWindow");
-//			   		
-//		super.onAttachedToWindow();
-//	}
-
+	public Runnable separateThread = new Runnable() {
+    	
+		@Override
+	    public void run() {
+			
+//			 runOnUiThread(new Runnable() {
+//	            @Override
+//	            public void run() {
+//	                if(!initEseguito){
+//	                	initEseguito = true;
+//	                	initUI();				
+//	                }
+//	            }
+//	        });
+						
+			while(start) {	    		
+//	    		updateUI();
+	    		
+	    		//1 Frame x 1 secondo
+	    		try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {}	    		
+	    	}
+			
+			//Resetto l'orario
+//			Message msg = new Message();	        
+//			handler.sendMessage(msg);
+	    } 	 	    		
+    };
 	
-	
-	
-	
-	
-	
+    private void updateUI() {
+	    
+    	Utility utility = new Utility();
+    	Calendar c = Calendar.getInstance();    	
+    	Message msg = new Message();
+        Bundle bundle = new Bundle();
+                       			                       
+        bundle.putString("ora",  	utility.dxFiller(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 	"0", 2));
+        bundle.putString("minuti", 	utility.dxFiller(String.valueOf(c.get(Calendar.MINUTE)), 		"0", 2));
+        bundle.putString("secondi", utility.dxFiller(String.valueOf(c.get(Calendar.SECOND)), 		"0", 2));
+        
+        msg.setData(bundle);
+        handler.sendMessage(msg);                         
+    }
+    
 	private Handler handler = new Handler() {
 	    @Override
 	    public void handleMessage(Message msg) {
@@ -115,86 +140,21 @@ public class LockScreenAppActivity extends Activity {
 	        }
 	    }
     };
- 
-    public Runnable separateThread = new Runnable() {
+
+    private void initUI() {
+    	Log.e("LockScreenAppActivity", "Start InitUI --->");
     	
-		@Override
-	    public void run() {
-
-			while(start) {
-	    		
-	    		System.out.println(start);
-	    		
-	    		updateUI();
-	    		
-	    		try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
-	    	}
-			
-			Message msg = new Message();	        
-			handler.sendMessage(msg);
-	    } 	 
-	    
-    };
-		
-    private void updateUI() {
-    	    
-    	Utility utility = new Utility();
-    	Calendar c = Calendar.getInstance();    	
-    	Message msg = new Message();
-        Bundle bundle = new Bundle();
-                       			                       
-        bundle.putString("ora",  	utility.dxFiller(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 	"0", 2));
-        bundle.putString("minuti", 	utility.dxFiller(String.valueOf(c.get(Calendar.MINUTE)), 		"0", 2));
-        bundle.putString("secondi", utility.dxFiller(String.valueOf(c.get(Calendar.SECOND)), 		"0", 2));
-        
-        msg.setData(bundle);
-        handler.sendMessage(msg);                         
-    }
-	
-
-	public void onCreate(Bundle savedInstanceState) {
-		Log.e("LockScreenAppActivity", "Start OnCreate --->");
-		
-		lock = true;
-		
-		super.onCreate(savedInstanceState);
-		
-		Utility utility = new Utility();
-		
-		windowwidth  = getWindowManager().getDefaultDisplay().getWidth();
-		windowheight = getWindowManager().getDefaultDisplay().getHeight();
-		
-		/*
-		 * SOUND DEFAULT LOCK SCREEN
-		 */
-		Settings.System.putInt(getContentResolver(), "lockscreen_sounds_enabled", 0);
-		
-		
-		// Con questo setto che l'applicazione deve attivarsi:
-		// -quando il telefono e bloccato
-		// -e in modalita fullscreenù
-		// getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getWindow().addFlags(	WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-								WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-//		lockScreenReeiver rec = new lockScreenReeiver();
-		
-		/*
-		 * LAYOUT
-		 */
-		setContentView(R.layout.main);
+    	
+    	Bitmap bitmap;
 		
 		page = (RelativeLayout) findViewById(R.id.page);
 		
 		ViewGroup.MarginLayoutParams marginLayoutParams;
-		Bitmap bitmap;
-		
+						
+		/*
+		 * BACKGROUND
+		 */
+		Log.e("LockScreenAppActivity", "initUI Background --->");
 		bgkUp = (ImageView) findViewById(R.id.bgkUp);
 		marginLayoutParams = (ViewGroup.MarginLayoutParams) bgkUp.getLayoutParams();
 		marginLayoutParams.setMargins(	0, 
@@ -213,8 +173,7 @@ public class LockScreenAppActivity extends Activity {
 		task = new CaricamentoTask(bgkDown, getResources(), CaricamentoTask.bkgDown);
 	    task.execute();
 		
-		
-				
+						
 		notificationList = (ListView) findViewById(R.id.notificationList);		
 		marginLayoutParams = (ViewGroup.MarginLayoutParams) notificationList.getLayoutParams();
 		marginLayoutParams.setMargins(	20, 
@@ -225,6 +184,7 @@ public class LockScreenAppActivity extends Activity {
 		/*
 		 * CLOCK
 		 */
+		Log.e("LockScreenAppActivity", "initUI Clock --->");
 		clock  = (TextView) findViewById(R.id.clock);
 		clock.setTextColor(Color.BLACK);
     	clock.setTextSize(80);
@@ -232,25 +192,78 @@ public class LockScreenAppActivity extends Activity {
 		second = (TextView) findViewById(R.id.second);
 		second.setTextColor(Color.BLACK);
 		
-		start = true;
-		Thread t = new Thread(separateThread);		
-        t.start();   
-        
 		marginLayoutParams = (ViewGroup.MarginLayoutParams) clock.getLayoutParams();
 		marginLayoutParams.setMargins(	20, 
         								(windowheight  / 100) * 10, 
         								20, 
         								0);
-		
-		Log.e("LockScreenAppActivity", "...."+clock.getLineHeight()+"");
-		
+						
 		marginLayoutParams = (ViewGroup.MarginLayoutParams) second.getLayoutParams();
 		marginLayoutParams.setMargins(	20, 
         								(windowheight  / 100) * 10 + clock.getLineHeight(), 
         								20, 
         								0);
 		
-		     
+		/*
+		 * Lucchetto
+		 */
+		Log.e("LockScreenAppActivity", "initUI Lucchetto --->");
+		lucchetto = (ImageView) findViewById(R.id.lucchetto);
+		bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
+		bitmap = Bitmap.createScaledBitmap(	bitmap, 
+												(windowheight  / 100) * 10, 
+												(windowheight  / 100) * 10, 
+												false);
+		lucchetto.setImageBitmap(bitmap);			
+								
+		/*
+		 * Circle Default
+		 */
+		Log.e("LockScreenAppActivity", "initUI Circle --->");
+		circle = (ImageView) findViewById(R.id.circle);
+		bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
+		bitmap = Bitmap.createScaledBitmap(	bitmap, 
+												(windowheight  / 100) * 16, 
+												(windowheight  / 100) * 16, 
+												false);					
+		circle.setImageBitmap(bitmap);						
+		circleLayout = (LayoutParams) circle.getLayoutParams();
+		circleLayout.leftMargin = (windowwidth  / 100) * 2;
+		circleLayout.topMargin  = ((windowheight  / 100) * 50) - (bitmap.getHeight()/2);
+		
+		Log.e("LockScreenAppActivity", "Finish InitUI ---|");
+    }
+    
+	public void onCreate(Bundle savedInstanceState) {
+		Log.e("LockScreenAppActivity", "Start OnCreate --->");
+								
+		super.onCreate(savedInstanceState);
+				
+		//Log memoria
+//		new Utility().logHeap(this.getClass());
+		
+		windowwidth  = getWindowManager().getDefaultDisplay().getWidth();
+		windowheight = getWindowManager().getDefaultDisplay().getHeight();
+		
+		/*
+		 * SOUND DEFAULT LOCK SCREEN
+		 */
+		Settings.System.putInt(getContentResolver(), "lockscreen_sounds_enabled", 0);
+		
+		
+		// Con questo setto che l'applicazione deve attivarsi:
+		// -quando il telefono e bloccato
+		// -e in modalita fullscreenù
+		// getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().addFlags(	WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+								WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+		
+		
+		start = true;
+		Thread t = new Thread(separateThread);		
+        t.start();   
                 
 		/*
 		 *  BOH GESTIONE VARIA
@@ -270,60 +283,32 @@ public class LockScreenAppActivity extends Activity {
 			StateListener phoneStateListener = new StateListener();
 			TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 			telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-										
-			/*
-			 * phone =(ImageView)findViewById(R.id.phone); MarginLayoutParams
-			 * marginParams = new MarginLayoutParams(phone.getLayoutParams());
-			 * marginParams.setMargins(0,windowheight/32,windowwidth/24,0);
-			 * LinearLayout.LayoutParams layoutParams1 = new
-			 * LinearLayout.LayoutParams(marginParams);
-			 * phone.setLayoutParams(layoutParams1);
-			 */
-					
-//			LinearLayout timelinear = (LinearLayout) findViewById(R.id.homelinearlayout);
-			
 			
 			/*
-			 * Home
+			 * LAYOUT
 			 */
-			lucchetto = (ImageView) findViewById(R.id.lucchetto);
-			bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
-			bitmap = Bitmap.createScaledBitmap(	bitmap, 
-													(windowheight  / 100) * 10, 
-													(windowheight  / 100) * 10, 
-													false);
-			lucchetto.setImageBitmap(bitmap);			
-									
-			/*
-			 * Circle Default
-			 */
-			circle = (ImageView) findViewById(R.id.circle);
-			bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
-			bitmap = Bitmap.createScaledBitmap(	bitmap, 
-													(windowheight  / 100) * 16, 
-													(windowheight  / 100) * 16, 
-													false);					
-			circle.setImageBitmap(bitmap);						
-			circleLayout = (LayoutParams) circle.getLayoutParams();
-			circleLayout.leftMargin = (windowwidth  / 100) * 2;
-			circleLayout.topMargin  = ((windowheight  / 100) * 50) - (bitmap.getHeight()/2);
+			setContentView(R.layout.main);
 			
+			
+			Bitmap bitmap;
 			
 			/*
 			 * Chiave 
 			 */
+			Log.e("LockScreenAppActivity", "initUI chiave --->");		
 			chiave = (ImageView) findViewById(R.id.chiave);
 			bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.chiave);
 			bitmap = Bitmap.createScaledBitmap(	bitmap, 
 													(windowwidth   / 24)  * 3, 
 													(windowheight  / 32)  * 2, 
-													false);
+													false);				
 			chiave.setImageBitmap(bitmap);									
 			chiaveLayout = (LayoutParams) chiave.getLayoutParams();
 			chiaveLayout.leftMargin = (windowwidth / 24) * 2;
 			chiaveLayout.topMargin  = (windowheight / 32) * 16;
 			
 			bitmap = null;
+			
 			
 			chiave.setOnTouchListener(new View.OnTouchListener() {
 
@@ -355,14 +340,14 @@ public class LockScreenAppActivity extends Activity {
 							
 							int x_cord = (int) event.getRawX();
 							int y_cord = (int) event.getRawY();
-	
+
 //							if (x_cord > windowwidth - (windowwidth / 24)) {
 //								x_cord = windowwidth - (windowwidth / 24) * 2;
 //							}
 //							if (y_cord > windowheight - (windowheight / 32)) {
 //								y_cord = windowheight - (windowheight / 32) * 2;
 //							}
-	
+
 							circleLayout.leftMargin = x_cord - (circle.getWidth() /2);
 							circleLayout.topMargin  = y_cord - (circle.getHeight()/2);								
 							circle.setLayoutParams(circleLayout);
@@ -374,22 +359,22 @@ public class LockScreenAppActivity extends Activity {
 							
 							chiaveLayout.leftMargin = x_cord - (chiave.getWidth() /2);
 							chiaveLayout.topMargin  = y_cord - (chiave.getHeight()/2);
-	
+
 							chiave.getLocationOnScreen(chiavePos);
 							v.setLayoutParams(chiaveLayout);
-	
+
 							if ((	(x_cord - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord) <= (windowwidth / 24) * 4) && 
 									((lucchetto_y - y_cord) <= (windowheight / 32) * 5)) {
 								
 //								System.out.println("home overlapps");
 //								System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
 //								System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);
-	
+
 								
 								
 								v.setVisibility(View.GONE);
 								lucchetto.setVisibility(View.GONE);
-	
+
 								// startActivity(new Intent(Intent.ACTION_VIEW,
 								// Uri.parse("content://contacts/people/")));
 								
@@ -418,14 +403,14 @@ public class LockScreenAppActivity extends Activity {
 							 * " overlapps"); }
 							 */
 							// v.invalidate();
-	
+
 							break;
 							
 						case MotionEvent.ACTION_UP:
-	
+
 							int x_cord1 = (int) event.getRawX();
 							int y_cord2 = (int) event.getRawY();
-	
+
 							if (((x_cord1 - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord1) <= (windowwidth / 24) * 4)
 									&& ((lucchetto_y - y_cord2) <= (windowheight / 32) * 5)) {
 								
@@ -433,11 +418,11 @@ public class LockScreenAppActivity extends Activity {
 //								System.out.println("homeee" + home_x + "  "
 //										+ (int) event.getRawX() + "  " + x_cord1
 //										+ " " + droidpos[0]);
-//	
+	//
 //								System.out.println("homeee" + home_y + "  "
 //										+ (int) event.getRawY() + "  " + y_cord2
 //										+ " " + droidpos[1]);
-	
+
 								// startActivity(new Intent(Intent.ACTION_VIEW,
 								// Uri.parse("content://contacts/people/")));
 								// finish();
@@ -453,7 +438,7 @@ public class LockScreenAppActivity extends Activity {
 //								layout_alignParentLeft="true"
 //							    layout_centerVertical="true"
 								v.setLayoutParams(chiaveLayout);
-	
+
 							}
 
 					}
@@ -463,31 +448,29 @@ public class LockScreenAppActivity extends Activity {
 				}
 				
 			});
-
-			/*
-			 * Button close =(Button)findViewById(R.id.lockk);
-			 * close.setOnClickListener(new View.OnClickListener() {
-			 * 
-			 * public void onClick(View v) { //k1.reenableKeyguard();
-			 * //startActivity(new Intent(Intent.ACTION_VIEW,
-			 * Uri.parse("content://contacts/people/")));
-			 * 
-			 * 
-			 * finish(); } });
-			 */
-
-			// PowerManager pm =
-			// (PowerManager)getSystemService(Context.POWER_SERVICE);
-
-			// PowerManager.WakeLock w1
-			// =pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP|PowerManager.FULL_WAKE_LOCK,"MyApp");
-			// w1.acquire();
-			// w1.release();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+													
+		} catch (Exception e) {}
 
 		Log.e("LockScreenAppActivity", "Finish OnCreate ---|");
+	}
+	
+	public void onStart() {
+		Log.e("LockScreenAppActivity", "Finish OnStart ---|");
+		
+		runOnUiThread(new Runnable() {
+	        @Override
+	        public void run() {
+	        	Log.e("LockScreenAppActivity", "OnStart Run");
+	        	
+	            if(!initEseguito){
+	            	initEseguito = true;
+	            	initUI();				
+	            }
+	        }
+	    });
+		
+		super.onStart();
+		Log.e("LockScreenAppActivity", "Finish OnStart ---|");
 	}
 
 	class StateListener extends PhoneStateListener {
@@ -578,7 +561,8 @@ public class LockScreenAppActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		System.out.println("onBackPressed");		
+		System.out.println("onBackPressed");
+		finish();
 		return;
 	}
 
@@ -593,9 +577,13 @@ public class LockScreenAppActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		start = true;		
-		Thread t = new Thread(separateThread);		
-        t.start();   		
+		new Utility().logHeap(this.getClass());
+		
+		if(!start){
+			start = true;		
+			Thread t = new Thread(separateThread);		
+	        t.start();
+		}
 	}
 
 	@Override
@@ -652,6 +640,8 @@ public class LockScreenAppActivity extends Activity {
 			
 			return false;
 		}
+		
+		finish();
 		return false;
 
 	}
@@ -670,7 +660,13 @@ public class LockScreenAppActivity extends Activity {
 	}
 
 	public void onDestroy() {
-		System.out.println("onDestroy");
+		System.out.println("onDestroy");		
+		start = false;
+		
+		System.exit(0);
+		
+//		finish();		
+//		android.os.Process.killProcess(android.os.Process.myPid());
 		
 //		k1.reenableKeyguard();
 		
