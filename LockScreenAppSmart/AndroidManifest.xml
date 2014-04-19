@@ -16,7 +16,7 @@
     
     <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
     
-    <application 	android:icon="@drawable/lockicon"
+    <application 	android:icon="@drawable/circle"
         			android:label="@string/app_name"
         			android:debuggable="true"
         			android:theme="@style/Theme.MyTheme">
