@@ -1,17 +1,15 @@
 package com.lockscreen;
 
 import receiver.lockScreenReeiver;
+import android.app.Activity;
 import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.view.WindowManager;
-import android.widget.Toast;
+import android.util.Log;
 
 public class MyService extends Service{
 	 BroadcastReceiver mReceiver;
@@ -22,41 +20,74 @@ public class MyService extends Service{
 		return null;
 	}
 
+	@Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+		Log.e("MyService", "Start onStartCommand --->");
 
+        if(intent == null || intent.getAction() == null)
+            return START_NOT_STICKY;
+
+        String action = intent.getAction();
+
+        Log.e("MyService", "ACTION ---> "+action);
+        
+        if(action.equals(Intent.ACTION_SCREEN_OFF))
+        {
+        	Log.e("MyService", "ACTION_SCREEN_OFF ---> "+action);
+        	
+//        	KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+//        	KeyguardLock lock = keyguardManager.newKeyguardLock(KEYGUARD_SERVICE);
+//        	lock.disableKeyguard();
+        	
+        	
+        	
+//           KeyguardManager.KeyguardLock k1;
+//           KeyguardManager km =(KeyguardManager)getSystemService(KEYGUARD_SERVICE);
+//           k1= km.newKeyguardLock("IN");
+//           k1.disableKeyguard();  
+        }
+
+//        return START_NOT_STICKY;
+        return START_STICKY;
+        
+    }
+	
+	
 @Override
 public void onCreate() {
-	System.out.println("onCreate?????????????????????????");
+	Log.e("MyService", "Start OnCreate --->");
 	
-	 KeyguardManager.KeyguardLock k1;
-
-	 //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-
-	 KeyguardManager km =(KeyguardManager)getSystemService(KEYGUARD_SERVICE);
-     k1= km.newKeyguardLock("IN");
-     k1.disableKeyguard();
-
-
-
-
-     /*try{
-     StateListener phoneStateListener = new StateListener();
-     TelephonyManager telephonyManager =(TelephonyManager)getSystemService(TELEPHONY_SERVICE);
-     telephonyManager.listen(phoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
-     }catch(Exception e){
-    	 System.out.println(e);
-     }*/
-
-    /* myIntent = new Intent(MyService.this,LockScreenAppActivity.class);
-     myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-     Bundle myKillerBundle = new Bundle();
-     myKillerBundle.putInt("kill",1);
-     myIntent.putExtras(myKillerBundle);*/
-
-     IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-     filter.addAction(Intent.ACTION_SCREEN_OFF);
-
-     mReceiver = new lockScreenReeiver();
-     registerReceiver(mReceiver, filter);
+//	 KeyguardManager.KeyguardLock k1;
+//
+//	 //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+//
+//	 KeyguardManager km =(KeyguardManager)getSystemService(KEYGUARD_SERVICE);
+//     k1= km.newKeyguardLock("IN");
+//     k1.disableKeyguard();
+//
+//
+//
+//
+//     /*try{
+//     StateListener phoneStateListener = new StateListener();
+//     TelephonyManager telephonyManager =(TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+//     telephonyManager.listen(phoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
+//     }catch(Exception e){
+//    	 System.out.println(e);
+//     }*/
+//
+//    /* myIntent = new Intent(MyService.this,LockScreenAppActivity.class);
+//     myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//     Bundle myKillerBundle = new Bundle();
+//     myKillerBundle.putInt("kill",1);
+//     myIntent.putExtras(myKillerBundle);*/
+//
+//     IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+//     filter.addAction(Intent.ACTION_SCREEN_OFF);
+//
+//     mReceiver = new lockScreenReeiver();
+//     registerReceiver(mReceiver, filter);
 
 
     super.onCreate();
@@ -66,7 +97,7 @@ public void onCreate() {
 @Override
 public void onStart(Intent intent, int startId) {
 	// TODO Auto-generated method stub
-
+	Log.e("MyService", "Start OnStart --->");
 	super.onStart(intent, startId);
 }
 

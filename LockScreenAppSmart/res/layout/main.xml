@@ -11,18 +11,39 @@
         android:layout_alignParentLeft="true">
 		<!-- android:background="@drawable/background"  -->
         
+        <!-- 
+        	***BACKGROUND***
+         -->
+        <ImageView
+            android:id="@+id/shadow_bgk_down" 
+            android:layout_alignBottom="@+id/bgkUp"
+            android:background="@drawable/shadow_down" 
+            android:layout_width="fill_parent" 
+            android:layout_height="50.0dip"/>
+        
+        <ImageView 
+            android:id="@+id/shadow_bgk_up"
+            android:layout_alignTop="@+id/bgkDown"
+            android:background="@drawable/shadow_up" 
+            android:layout_width="fill_parent" 
+            android:layout_height="50.0dip"/>
+                        	                   	  
         <ImageView
             android:id="@+id/bgkUp"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"            
             android:background="@android:color/black" />
-        
+                	    
         <ImageView
             android:id="@+id/bgkDown"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"            
             android:background="@android:color/black" />
         
+        
+        <!-- 
+        	***SYSTEM SBLOCK***
+         -->
         <ImageView
             android:id="@+id/lineDashed"
             android:layout_width="wrap_content"
@@ -56,8 +77,12 @@
             android:layout_marginRight="24dp"
             android:visibility="visible" />
 
-    </RelativeLayout>
+    </RelativeLayout>    
 
+            
+   	<!-- 
+	   	***CLOCK***
+    -->
     <TextView
         android:id="@+id/clock"
         android:layout_width="wrap_content"
@@ -84,17 +109,21 @@
             android:shadowRadius="2"
             android:text="26"
             android:textSize="40dp" />
-        
+    
+    
+    <!-- 
+	   	***NOTIFICATION***
+    -->
 	<com.lockscreen.NotificationList 	
-	    								android:id="@+id/notificationList"
-	    								android:background="@drawable/bkg" 
-	    								android:padding="3.0dip" 
-	    								android:layout_width="fill_parent" 
-	    								android:layout_height="wrap_content" 
-	    								android:layout_marginLeft="20.0dip" 
-	    								android:layout_marginTop="300.0dip" 
-	    								android:layout_marginRight="20.0dip" 
-	    								android:layout_marginBottom="100.0dip" 
-	    								android:listSelector="@android:color/transparent"/>
+		android:id="@+id/notificationList"
+		android:background="@drawable/bkg" 
+		android:padding="3.0dip" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:layout_marginLeft="20.0dip" 
+		android:layout_marginTop="300.0dip" 
+		android:layout_marginRight="20.0dip" 
+		android:layout_marginBottom="100.0dip" 
+		android:listSelector="@android:color/transparent"/>
 	
 </RelativeLayout>

@@ -3,12 +3,13 @@ package com.lockscreen;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.KeyguardManager.KeyguardLock;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,49 +26,110 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.lockscreen.listener.AnimationEndListener;
 import com.lockscreen.task.CaricamentoTask;
 
-public class LockScreenAppActivity extends Activity {
+public class LockScreenAppActivity extends Activity{
 
-	/** Called when the activity is first created. */
-	boolean inDragMode;
-	int selectedImageViewX;
-	int selectedImageViewY;
-	int windowwidth;
-	int windowheight;
+//	int selectedImageViewX;
+//	int selectedImageViewY;
 	
-	ImageView chiave, phone, lucchetto;
-	ImageView lineDashed;
-	ImageView circle;
+	protected int windowwidth;
+	public int getWindowwidth() {
+		return windowwidth;
+	}
+
+	public void setWindowwidth(int windowwidth) {
+		this.windowwidth = windowwidth;
+	}
+
+	protected int windowheight;
+	
+	protected ImageView chiave;
+	public ImageView getChiave() {
+		return chiave;
+	}
+
+	public void setChiave(ImageView chiave) {
+		this.chiave = chiave;
+	}
+
+	ImageView phone;
+	protected ImageView lucchetto;
+	protected ImageView lineDashed;
+	protected ImageView circle;
 	ImageView bgkUp, bgkDown;
+	ImageView shadowbgkUp, shadowbgkDown;
 	
 	private TextView clock;
 	private TextView second;
 	
 	ListView notificationList;
 	
+	Animation animBgkUp;
+	Animation animBgkDown;	
+	
 	// int phone_x,phone_y;
-	int lucchetto_x, lucchetto_y;
-	int[] chiavePos;
+	protected int lucchetto_x;
+	protected int lucchetto_y;
+	protected int[] chiavePos;
 	
 	boolean start 			= false;
 	boolean lock 			= true;
 	boolean initEseguito 	= false;
 
-	private LayoutParams chiaveLayout, circleLayout, pageLayout;
+	protected LayoutParams chiaveLayout;
+	protected LayoutParams circleLayout;
+	protected LayoutParams pageLayout;
 	
 	private RelativeLayout page;
 	
+	KeyguardLock kl;
+	
 	public void onCreate(Bundle savedInstanceState) {
 		Log.e("LockScreenAppActivity", "Start OnCreate --->");
-								
+		
+//		WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+		
+		getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+		getWindow().addFlags(	
+								WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+								WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+//		getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+//        getWindow().addFlags(	WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+//        						WindowManager.LayoutParams.FLAG_FULLSCREEN |
+//        						WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+		
 		super.onCreate(savedInstanceState);
+		
+       
+        startService(new Intent(this, MyService.class).setAction(Intent.ACTION_SCREEN_OFF));
+		
+		
+		
+		
+		
+		
+		
+//		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+//		WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK
+//                | PowerManager.ACQUIRE_CAUSES_WAKEUP
+//                | PowerManager.ON_AFTER_RELEASE, "INFO");
+//        wl.acquire();
+//
+//KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+//        kl = km.newKeyguardLock("LockScreenApp");
+//        kl.disableKeyguard();
 				
 		//Log memoria
 //		new Utility().logHeap(this.getClass());
@@ -85,9 +147,7 @@ public class LockScreenAppActivity extends Activity {
 		// -quando il telefono e bloccato
 		// -e in modalita fullscreen
 		// getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getWindow().addFlags(	WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-								WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-								WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
 		
 		
 		
@@ -136,8 +196,14 @@ public class LockScreenAppActivity extends Activity {
 	        								0, 
 	        								0, 
 	        								(windowheight  / 100) * 50);
+			shadowbgkUp = (ImageView) findViewById(R.id.shadow_bgk_up);
+			marginLayoutParams = (ViewGroup.MarginLayoutParams) shadowbgkUp.getLayoutParams();
+			marginLayoutParams.setMargins(	0, 
+											(windowheight  / 100) * 50, 
+	        								0, 
+	        								0);
 			CaricamentoTask task = new CaricamentoTask(bgkUp, getResources(), CaricamentoTask.bkgUp);
-		    task.execute();
+		    task.execute();		    
 		    
 			bgkDown = (ImageView) findViewById(R.id.bgkDown);
 			marginLayoutParams = (ViewGroup.MarginLayoutParams) bgkDown.getLayoutParams();
@@ -145,6 +211,12 @@ public class LockScreenAppActivity extends Activity {
 											(windowheight  / 100) * 50, 
 	        								0, 
 	        								0);
+			shadowbgkDown = (ImageView) findViewById(R.id.shadow_bgk_down);
+			marginLayoutParams = (ViewGroup.MarginLayoutParams) shadowbgkDown.getLayoutParams();
+			marginLayoutParams.setMargins(	0, 
+											0, 
+	        								0, 
+	        								(windowheight  / 100) * 50);
 			task = new CaricamentoTask(bgkDown, getResources(), CaricamentoTask.bkgDown);
 		    task.execute();
 			
@@ -167,7 +239,7 @@ public class LockScreenAppActivity extends Activity {
 	    	clock.setTextSize(80);
 	    	marginLayoutParams = (ViewGroup.MarginLayoutParams) clock.getLayoutParams();
 			marginLayoutParams.setMargins(	20, 
-	        								(windowheight  / 100) * 10, 
+	        								(windowheight  / 100) * 5, 
 	        								20, 
 	        								0);	
 			
@@ -175,7 +247,7 @@ public class LockScreenAppActivity extends Activity {
 			second.setTextColor(Color.BLACK);					
 			marginLayoutParams = (ViewGroup.MarginLayoutParams) second.getLayoutParams();
 			marginLayoutParams.setMargins(	20, 
-	        								(windowheight  / 100) * 10 + clock.getLineHeight(), 
+	        								(windowheight  / 100) * 5 + clock.getLineHeight(), 
 	        								20, 
 	        								0);
 			
@@ -220,6 +292,7 @@ public class LockScreenAppActivity extends Activity {
 												false);
 			chiave.setImageBitmap(bitmap);
 			chiave.setOnTouchListener(myOnTouchListener);
+//			chiave.setOnTouchListener(new TouchChiaveListener(this));			
 			chiaveLayout = (LayoutParams) chiave.getLayoutParams();
 			chiaveLayout.leftMargin = (windowwidth / 24) * 2;
 			chiaveLayout.topMargin  = (windowheight / 32) * 16;
@@ -309,154 +382,153 @@ public class LockScreenAppActivity extends Activity {
 		
     	@Override
 		public boolean onTouch(View v, MotionEvent event) {
+    		Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    		chiaveLayout = (LayoutParams) v.getLayoutParams();
+    		 					
+    		switch (event.getAction()) {
 
-			Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			chiaveLayout = (LayoutParams) v.getLayoutParams();
-			 					
-			switch (event.getAction()) {
+    			case MotionEvent.ACTION_DOWN:
+    				Log.d("LockScreenAppActivity", "MyOnTouchListener Action Down");
+    											
+    				vibrator.vibrate(40);
+    											    				
+    				Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.chiave);
+    				bitmap = Bitmap.createScaledBitmap(	bitmap, 
+    													(windowwidth   / 24)  * 3, 
+    													(windowheight  / 32)  * 2, 
+    													false);				
+    				chiave.setImageBitmap(bitmap);
+    				
+    				lucchetto.setVisibility(View.VISIBLE);
+    				circle.setVisibility(View.VISIBLE);
+    				lineDashed.setVisibility(View.VISIBLE);
+    				
+    				int[] hompos 	= new int[2];
+    				chiavePos 		= new int[2];
+    				
+    				lucchetto.getLocationOnScreen(hompos);
+    				lucchetto_x = hompos[0];
+    				lucchetto_y = hompos[1];
+    				
+    				break;
+    				
+    			case MotionEvent.ACTION_MOVE:
+    				Log.d("LockScreenAppActivity", "MyOnTouchListener Action Move");
+    				
+    				int x_cord = (int) event.getRawX();
+    				int y_cord = (int) event.getRawY();
 
-				case MotionEvent.ACTION_DOWN:
-					Log.d("LockScreenAppActivity", "MyOnTouchListener Action Down");
-												
-					vibrator.vibrate(40);
-												
-					chiave = (ImageView) findViewById(R.id.chiave);
-					Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.chiave);
-					bitmap = Bitmap.createScaledBitmap(	bitmap, 
-														(windowwidth   / 24)  * 3, 
-														(windowheight  / 32)  * 2, 
-														false);				
-					chiave.setImageBitmap(bitmap);
+//    				if (x_cord > windowwidth - (windowwidth / 24)) {
+//    					x_cord = windowwidth - (windowwidth / 24) * 2;
+//    				}
+//    				if (y_cord > windowheight - (windowheight / 32)) {
+//    					y_cord = windowheight - (windowheight / 32) * 2;
+//    				}
+
+    				circleLayout.leftMargin = x_cord - (circle.getWidth() /2);
+    				circleLayout.topMargin  = y_cord - (circle.getHeight()/2);								
+    				circle.setLayoutParams(circleLayout);
+    				
+//    				pageLayout.leftMargin = x_cord;
+//    				pageLayout.topMargin = y_cord;
+//    				page.setLayoutParams(pageLayout);
+//    				page.requestLayout();
+    				
+    				chiaveLayout.leftMargin = x_cord - (chiave.getWidth() /2);
+    				chiaveLayout.topMargin  = y_cord - (chiave.getHeight()/2);
+
+    				chiave.getLocationOnScreen(chiavePos);
+    				v.setLayoutParams(chiaveLayout);
+
+    				if ((	(x_cord - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord) <= (windowwidth / 24) * 4) && 
+    						((lucchetto_y - y_cord) <= (windowheight / 32) * 5)) {
+    					
+//    					System.out.println("home overlapps");
+//    					System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
+//    					System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);
+
+    					v.setVisibility(View.GONE);
+    					lucchetto.setVisibility(View.GONE);
+    					
+    					
+
+    					// startActivity(new Intent(Intent.ACTION_VIEW,
+    					// Uri.parse("content://contacts/people/")));
+    					
+    					unloack();
+    					
+    				} else {
+    					
+//    					System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
+//    					System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);	
+//    					System.out.println("home notttt overlapps");
+    					
+    				}
+    				/*
+    				 * if(((x_cord-phone_x)>=128 && (x_cord-phone_x)<=171
+    				 * )&&((phone_y-y_cord)<=10)) {
+    				 * System.out.println("phone overlapps"); finish(); }
+    				 * else{
+    				 * System.out.println(phone_x+"  "+(int)event.getRawX
+    				 * ()+"  "+x_cord+" "+droidpos[0]);
+    				 * 
+    				 * System.out.println(phone_y+"  "+(int)event.getRawY()+"  "
+    				 * +y_cord+" "+droidpos[1]);
+    				 * 
+    				 * 
+    				 * System.out.println("phone not overlapps" +
+    				 * " overlapps"); }
+    				 */
+    				// v.invalidate();
+
+    				break;
+    				
+    			case MotionEvent.ACTION_UP:
+    				Log.d("LockScreenAppActivity", "MyOnTouchListener Action Up");
+
+    				int x_cord1 = (int) event.getRawX();
+    				int y_cord2 = (int) event.getRawY();
+
+    				if (	((x_cord1 - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord1) <= (windowwidth / 24) * 4)
+    						&& ((lucchetto_y - y_cord2) <= (windowheight / 32) * 5)) {
+    					
+
+
+    					// startActivity(new Intent(Intent.ACTION_VIEW,
+    					// Uri.parse("content://contacts/people/")));
+    					// finish();
+    					
+    				} else {
+
+    					lucchetto.setVisibility(View.INVISIBLE);						
+    					circle.setVisibility(View.INVISIBLE);
+    					lineDashed.setVisibility(View.INVISIBLE);
+    					
+    					chiave = (ImageView) findViewById(R.id.chiave);	
+    					bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
+    					bitmap = Bitmap.createScaledBitmap(	bitmap, 
+    														(windowheight  / 100) * 10, 
+    														(windowheight  / 100) * 10, 
+    														false);							
+    					chiave.setImageBitmap(bitmap);
+    					
+    					circleLayout.leftMargin = (windowwidth  / 100) * 2;
+    					circleLayout.topMargin  = (windowheight  / 100) * 42;				
+    					circle.setLayoutParams(circleLayout);
+    					
+    					chiaveLayout.leftMargin = (windowwidth / 24) * 2;
+    					chiaveLayout.topMargin  = (windowheight / 32) * 16;
+    					v.setLayoutParams(chiaveLayout);
+
+    				}
+
+    		}
+
+    		return true;
+    		
+    	}
+
 					
-					lucchetto.setVisibility(View.VISIBLE);
-					circle.setVisibility(View.VISIBLE);
-					lineDashed.setVisibility(View.VISIBLE);
-					
-					int[] hompos 	= new int[2];
-					chiavePos 		= new int[2];
-					
-					lucchetto.getLocationOnScreen(hompos);
-					lucchetto_x = hompos[0];
-					lucchetto_y = hompos[1];
-					
-					break;
-					
-				case MotionEvent.ACTION_MOVE:
-					Log.d("LockScreenAppActivity", "MyOnTouchListener Action Move");
-					
-					int x_cord = (int) event.getRawX();
-					int y_cord = (int) event.getRawY();
-
-//					if (x_cord > windowwidth - (windowwidth / 24)) {
-//						x_cord = windowwidth - (windowwidth / 24) * 2;
-//					}
-//					if (y_cord > windowheight - (windowheight / 32)) {
-//						y_cord = windowheight - (windowheight / 32) * 2;
-//					}
-
-					circleLayout.leftMargin = x_cord - (circle.getWidth() /2);
-					circleLayout.topMargin  = y_cord - (circle.getHeight()/2);								
-					circle.setLayoutParams(circleLayout);
-					
-//					pageLayout.leftMargin = x_cord;
-//					pageLayout.topMargin = y_cord;
-//					page.setLayoutParams(pageLayout);
-//					page.requestLayout();
-					
-					chiaveLayout.leftMargin = x_cord - (chiave.getWidth() /2);
-					chiaveLayout.topMargin  = y_cord - (chiave.getHeight()/2);
-
-					chiave.getLocationOnScreen(chiavePos);
-					v.setLayoutParams(chiaveLayout);
-
-					if ((	(x_cord - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord) <= (windowwidth / 24) * 4) && 
-							((lucchetto_y - y_cord) <= (windowheight / 32) * 5)) {
-						
-//						System.out.println("home overlapps");
-//						System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
-//						System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);
-
-						
-						
-						v.setVisibility(View.GONE);
-						lucchetto.setVisibility(View.GONE);
-
-						// startActivity(new Intent(Intent.ACTION_VIEW,
-						// Uri.parse("content://contacts/people/")));
-						
-						unloack();
-						
-					} else {
-						
-//						System.out.println("homeee" + home_x + "  " + (int) event.getRawX() + "  " + x_cord + " " + droidpos[0]);	
-//						System.out.println("homeee" + home_y + "  " + (int) event.getRawY() + "  " + y_cord + " " + droidpos[1]);	
-//						System.out.println("home notttt overlapps");
-						
-					}
-					/*
-					 * if(((x_cord-phone_x)>=128 && (x_cord-phone_x)<=171
-					 * )&&((phone_y-y_cord)<=10)) {
-					 * System.out.println("phone overlapps"); finish(); }
-					 * else{
-					 * System.out.println(phone_x+"  "+(int)event.getRawX
-					 * ()+"  "+x_cord+" "+droidpos[0]);
-					 * 
-					 * System.out.println(phone_y+"  "+(int)event.getRawY()+"  "
-					 * +y_cord+" "+droidpos[1]);
-					 * 
-					 * 
-					 * System.out.println("phone not overlapps" +
-					 * " overlapps"); }
-					 */
-					// v.invalidate();
-
-					break;
-					
-				case MotionEvent.ACTION_UP:
-					Log.d("LockScreenAppActivity", "MyOnTouchListener Action Up");
-
-					int x_cord1 = (int) event.getRawX();
-					int y_cord2 = (int) event.getRawY();
-
-					if (	((x_cord1 - lucchetto_x) <= (windowwidth / 24) * 5 && (lucchetto_x - x_cord1) <= (windowwidth / 24) * 4)
-							&& ((lucchetto_y - y_cord2) <= (windowheight / 32) * 5)) {
-						
-
-
-						// startActivity(new Intent(Intent.ACTION_VIEW,
-						// Uri.parse("content://contacts/people/")));
-						// finish();
-						
-					} else {
-
-						lucchetto.setVisibility(View.INVISIBLE);						
-						circle.setVisibility(View.INVISIBLE);
-						lineDashed.setVisibility(View.INVISIBLE);
-						
-						chiave = (ImageView) findViewById(R.id.chiave);	
-						bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.homeupdated);
-						bitmap = Bitmap.createScaledBitmap(	bitmap, 
-															(windowheight  / 100) * 10, 
-															(windowheight  / 100) * 10, 
-															false);							
-						chiave.setImageBitmap(bitmap);
-						
-						circleLayout.leftMargin = (windowwidth  / 100) * 2;
-						circleLayout.topMargin  = (windowheight  / 100) * 42;				
-						circle.setLayoutParams(circleLayout);
-						
-						chiaveLayout.leftMargin = (windowwidth / 24) * 2;
-						chiaveLayout.topMargin  = (windowheight / 32) * 16;
-						v.setLayoutParams(chiaveLayout);
-
-					}
-
-			}
-
-			return true;
-			
-		}
-		
     };
       
 	class StateListener extends PhoneStateListener {
@@ -601,16 +673,37 @@ public class LockScreenAppActivity extends Activity {
 	}
 	
 	public void unloack(){
+		Log.d("LockScreenAppActivity", "Unloack");
 		
 		if(lock){
+			lock = false;
+			
 			Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 			vibrator.vibrate(40);
 			
-			page.setMinimumHeight(100);
-		}
-		
-		lock = false;
-		finish();	 
+			clock.setVisibility			(View.INVISIBLE);
+			second.setVisibility		(View.INVISIBLE);
+			lucchetto.setVisibility		(View.INVISIBLE);						
+    		circle.setVisibility		(View.INVISIBLE);
+    		lineDashed.setVisibility	(View.INVISIBLE);
+			
+			AnimationEndListener animationEndListener = new AnimationEndListener(this);
+			
+			animBgkUp 	= AnimationUtils.loadAnimation(this, R.anim.anim_bgk_up);					
+			animBgkUp.setAnimationListener(animationEndListener);				
+			animBgkDown = AnimationUtils.loadAnimation(this, R.anim.anim_bgk_down);
+			animBgkDown.setAnimationListener(animationEndListener);
+						
+			bgkUp.startAnimation(animBgkUp);		
+			bgkUp.setVisibility(View.INVISIBLE);			
+			bgkDown.startAnimation(animBgkDown);
+			bgkDown.setVisibility(View.INVISIBLE);
+			shadowbgkUp.startAnimation(animBgkUp);
+			shadowbgkUp.setVisibility(View.INVISIBLE);
+			shadowbgkDown.startAnimation(animBgkDown);
+			shadowbgkDown.setVisibility(View.INVISIBLE);
+							
+		}							 
 	}
 
 	public void onDestroy() {
@@ -622,9 +715,17 @@ public class LockScreenAppActivity extends Activity {
 //		finish();		
 //		android.os.Process.killProcess(android.os.Process.myPid());
 		
-//		k1.reenableKeyguard();
+		kl.reenableKeyguard();
 		
 		super.onDestroy();
 	}
 
+	public ImageView getLucchetto() {
+		return lucchetto;
+	}
+
+	public void setLucchetto(ImageView lucchetto) {
+		this.lucchetto = lucchetto;
+	}
+	
 }
